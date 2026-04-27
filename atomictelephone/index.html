@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — The Atomic Corporation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0c1d17;
+  --border: rgba(180,210,190,0.13);
+  --border-hover: rgba(180,210,190,0.28);
+  --cream: #e8e0cc;
+  --cream-dim: rgba(232,224,204,0.55);
+  --cream-muted: rgba(232,224,204,0.32);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--serif);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg);
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../images/GDWrath.png');
+  background-position: bottom;
+  opacity: 1;
+  z-index: -1;
+}
+
+nav {
+  display: grid;
+  grid-template-columns: 220px 1fr 1fr 1fr 1fr 160px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(12,29,23,0.70);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: grid-template-columns 0.3s ease;
+  align-items: stretch;
+}
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 40px;
+  min-width: 40px;
+  height: 76px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+  padding: 8px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--cream-dim);
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(10px, 10px);
+}
+
+.hamburger-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 76px;
+  left: 0;
+  right: 0;
+  background: rgba(12,29,23,0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  z-index: 99;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-menu.active { display: flex; }
+
+.mobile-menu a {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--cream-dim);
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--serif);
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.mobile-menu a:hover {
+  background: rgba(180,210,190,0.06);
+  color: var(--cream);
+}
+
+.nav-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 76px;
+  text-decoration: none;
+  position: relative;
+}
+.nav-cell:last-child { border-right: none; }
+.nav-cell:hover { background: rgba(180,210,190,0.06); }
+.nav-logo-cell { justify-content: flex-start; padding: 16px 24px; cursor: default; }
+.nav-logo-cell:hover { background: transparent; }
+
+.nav-logo {
+  font-family: "Bodoni Moda", serif;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  line-height: 1.15;
+  color: var(--cream);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.nav-link-text {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.0em;
+  color: var(--cream-dim);
+  text-transform: uppercase;
+  user-select: none;
+  transition: color 0.15s;
+}
+.nav-cell:hover .nav-link-text { color: var(--cream); }
+
+.hero-wrapper {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  overflow: visible;
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(180,210,190,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(180,210,190,0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 75% at 50% 50%, transparent 25%, rgba(12,29,23,0.7) 65%, var(--bg) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 110px 2rem 110px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--cream-muted);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(54px, 7.5vw, 92px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 0.98;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
+}
+
+.hero-sub {
+  font-family: var(--serif);
+  font-size: 18.5px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1.7;
+  max-width: 560px;
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 28px;
+  padding: 48px 32px 32px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.contact-panel,
+.contact-card {
+  padding: 36px 32px;
+  border: 1px solid var(--border);
+  background: rgba(12,29,23,0.45);
+}
+
+.contact-panel {
+  display: grid;
+  gap: 24px;
+  grid-column: 1 / -1;
+}
+
+.contact-panel h2,
+.contact-card h3 {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+.contact-panel p,
+.contact-card p,
+.contact-card li,
+.contact-panel li {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--cream-dim);
+  line-height: 1.8;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-list li {
+  margin-bottom: 18px;
+}
+
+.contact-list strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cream);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.contact-list a {
+  color: var(--cream);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.contact-list a:hover { color: var(--cream-dim); }
+
+.contact-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-card li {
+  margin-bottom: 12px;
+}
+
+.contact-card small {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--mono);
+  color: var(--cream-muted);
+  letter-spacing: 0.12em;
+}
+
+.form-field {
+  display: grid;
+  gap: 10px;
+}
+
+.form-field label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cream-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(232,224,204,0.14);
+  background: rgba(12,29,23,0.65);
+  color: var(--cream);
+  font-family: var(--serif);
+  resize: vertical;
+}
+
+.form-field textarea {
+  min-height: 150px;
+}
+
+.submit-btn {
+  align-self: start;
+  padding: 12px 26px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--cream-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.submit-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--cream);
+  background: rgba(180,210,190,0.04);
+}
+
+.more-row {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  padding: 28px;
+}
+
+.more-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 10px 30px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.18s;
+}
+.more-btn:hover { border-color: var(--border-hover); color: var(--cream); background: rgba(180,210,190,0.04); }
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 36px;
+  border-top: 1px solid var(--border);
+}
+.footer-left { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); letter-spacing: 0.1em; }
+.footer-right { display: flex; gap: 28px; }
+.footer-right a { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); text-decoration: none; letter-spacing: 0.1em; transition: color 0.15s; }
+.footer-right a:hover { color: var(--cream-dim); }
+
+@media (max-width: 1024px) {
+  .contact-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  nav { grid-template-columns: 1fr 40px; }
+  .nav-cell:not(.nav-logo-cell) { display: none; }
+  .hamburger-btn { display: flex; }
+  .hero { padding: 96px 1.5rem 96px; }
+  .contact-grid { padding: 32px 18px 24px; }
+}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-cell nav-logo-cell">
+    <a class="nav-logo" href="/">THE ATOMIC<br>CORPORATION</a>
+  </div>
+  <a class="nav-cell" href="/contact/"><span class="nav-link-text" data-orig="Contact">Contact</span></a>
+  <a class="nav-cell" href="https://www.linkedin.com/in/tjenkins1/"><span class="nav-link-text" data-orig="LinkedIn">LinkedIn</span></a>
+  <a class="nav-cell" href="https://github.com/Jenkinxs/"><span class="nav-link-text" data-orig="GitHub">GitHub</span></a>
+  <a class="nav-cell" href="https://pricey-fish95.bandcamp.com/"><span class="nav-link-text" data-orig="Bandcamp">Bandcamp</span></a>
+  <button class="hamburger-btn" id="hamburger-menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="about.html">Contact</a>
+  <a href="https://drive.google.com/file/d/1hk0gFpIgDU0rKCejF2Y3W3u4aQJx4tnS/view">Resume</a>
+  <a href="https://github.com/Jenkinxs/">GitHub</a>
+  <a href="https://pricey-fish95.bandcamp.com/">Bandcamp</a>
+</div>
+
+
+
+<div class="contact-grid">
+  <div class="contact-panel">
+    <h2>AtomicTelephone's Privacy Policy</h2>
+    The AtomicTelephone Privacy Policy uses Google’s Privacy Policy as a base, and builds upon it. 
+    AtomicTelephone handles your data (Voice messages (in audio & transcribed form), text messages, and phone number), and does processing on it for analysis to improve University services. 
+    <p>  
+    Identifying Information:<br>
+
+        Identifying information (your phone number), post Google, is encrypted via the SHA-256 hash, when it is stored for use in analysis by the University. 
+
+        Identifying information is only left in a more unencrypted state on Google’s end, and can only be viewed by higher technical administration personnel involved in the running of the University’s software - AtomicTelephone. 
+
+      </p>
+      <p>
+    Your Data:<br>
+
+        Your data is not used for any purposes outside of localized analysis of concerns provided by calling or leaving messages in order to better serve the student body. 
+
+        <br>Your audio data is not saved long-term at the University, but may be saved temporarily for transcription purposes, and are deleted immediately after use.
+
+
+    Data Collected:
+
+        Voice messages (audio and transcribed text)
+
+        Text messages
+
+        Phone number (locally encrypted before processing)
+
+      </p>
+      <p>
+    Use of Data:<br>
+
+        Data is used solely for localized analysis of concerns shared by students through AtomicTelephone, to improve University services, and student outreach.
+
+        AtomicTelephone does not sell, rent, or otherwise share your personal data.
+
+
+        Data may be shared only under the following limited circumstances:
+
+                With authorized University personnel conducting approved research or analysis.
+
+                With Google, solely to the extent required for service operation.
+
+                When required by law, subpoena, or University policy compliance.
+      </p>
+      <p>
+
+    Storage & Processing:<br>
+
+        Audio messages may be temporarily processed for transcription and not permanently stored by the University.
+
+        Text transcripts and phone numbers are encrypted and stored only for analysis.
+
+        Only authorized technical administrators of the University, who are directly involved in the operation of AtomicTelephone, may access data in an identifiable form.
+
+      </p>
+    <p>
+    Retention & Deletion:<br>
+
+        Data is retained only as long as necessary for analysis, after which it is securely deleted.
+
+        Users may request deletion of their messages at any time by connecting with the University’s contact(s) - see below.
+
+    </p>
+    <p>
+    Third-Party Processing:<br>
+
+        Google provides back-end services (storage and transcription) under its own Privacy Policy and acts as a data processor.
+
+    </p>
+    <p>
+    Contact:<br>
+
+        For privacy-related questions, contact Student Affairs [stuaff@drew.edu].
+
+    </p>
+    <p>
+    Changes to this Policy:<br>
+
+        This policy may be updated periodically. Any significant material changes will be communicated through appropriate channels before they take effect.
+    </p>
+    <p>
+    Google’s Privacy Policy:<br>
+
+    [Google Voice]<br>
+
+        “How Google Voice protects your privacy and keeps you in control: Your content is stored securely”:
+
+                https://support.google.com/voice/answer/10464820?hl=en-GB
+
+                “When you send and receive text messages and attachments on Google Voice, they’re stored securely in our world-class data centres. Data is encrypted in transit from a Google Voice client to Google, and when stored at rest. When you record a voicemail greeting on Google Voice, or when you leave a voicemail for others, your audio data is stored.”
+
+        <br>
+        <br>“How Google Voice works”:
+
+                https://policies.google.com/technologies/voice?hl=en-US
+
+                “Anonymized copies of call record information, with no personally identifiable  information, will be retained in our systems to meet our reporting and auditing Requirements.”
+
+
+        <br>“Google Voice Privacy Disclosure: Information we share”:
+
+                https://workspace.google.com/terms/service-terms/voice/privacy_disclosure/
+
+                “We do not… use personal information collected by the Google Telephony Services for marketing or advertising purposes. Location data associated with your use of the Google Telephony Service is used only for the purposes of conveying a communication on an electronic communications network, billing, emergency calls, and to comply with applicable law.”
+
+                “We may be required to retain and preserve certain information that we obtain in providing the Google Telephony Services (including call history data) in order to comply with applicable law, regulation, legal process or enforceable governmental requests.”
+
+
+
+    <br><br>[Google Mail (Gmail)]<br>
+
+        https://support.google.com/mail/answer/10434152?hl=en-GB
+
+
+        <br>“How Gmail protects your privacy & keeps you in control: Your content is stored securely”:
+
+                “When you send an email or text message, send attachments or record video meetings, they are stored securely in our world-class data centres. Data is encrypted in transit and at rest.”
+
+
+        <br>“We do not scan or read your Gmail messages to show you ads”:
+
+                “We do not process email content to serve ads.”
+
+
+        <br>“Data is used to improve your Gmail experience”:
+
+                “...We use Gmail data to provide a more intelligent email experience and keep you safe.
+
+                “...We also use this info to help prevent abuse of our services and for analysis.” </p>
+  </div>
+
+  
+
+
+
+<footer>
+  <span class="footer-left">The Atomic Corporation</span>
+  <div class="footer-right"></div>
+</footer>
+
+<script>
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=*+-><';
+function scramble(el, target, ms) {
+  const frames = Math.floor(ms / 35);
+  let f = 0;
+  const iv = setInterval(() => {
+    f++;
+    const prog = f / frames;
+    el.textContent = target.split('').map((ch, i) => {
+      if (ch === ' ') return ' ';
+      if (i < Math.floor(prog * target.length)) return ch;
+      return CHARS[Math.floor(Math.random() * CHARS.length)];
+    }).join('');
+    if (f >= frames) { clearInterval(iv); el.textContent = target; }
+  }, 35);
+  return iv;
+}
+
+document.querySelectorAll('.nav-cell:not(.nav-logo-cell)').forEach(cell => {
+  const el = cell.querySelector('.nav-link-text');
+  if (!el) return;
+  const orig = el.dataset.orig || el.textContent.trim();
+  let iv = null;
+  cell.addEventListener('mouseenter', () => { if (iv) clearInterval(iv); iv = scramble(el, orig, 420); });
+  cell.addEventListener('mouseleave', () => { if (iv) clearInterval(iv); el.textContent = orig; });
+});
+
+const hamburgerBtn = document.getElementById('hamburger-menu');
+const mobileMenu = document.getElementById('mobile-menu');
+
+hamburgerBtn.addEventListener('click', () => {
+  hamburgerBtn.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+});
+
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburgerBtn.classList.remove('active');
+    mobileMenu.classList.remove('active');
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('nav') && !e.target.closest('.mobile-menu')) {
+    hamburgerBtn.classList.remove('active');
+    mobileMenu.classList.remove('active');
+  }
+});
+</script>
+</body>
+</html>
