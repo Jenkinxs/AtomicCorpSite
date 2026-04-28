@@ -22,6 +22,8 @@
   --theme-accent-lightness: 78%;
   --theme-text-saturation: 26%;
   --theme-text-lightness: 83%;
+  filter: invert(0);
+  animation: invert-pulse 0.5s ease-out 1;
   
   --bg: hsl(var(--theme-hue) var(--theme-bg-saturation) var(--theme-bg-lightness));
   --panel: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.70);
@@ -452,6 +454,19 @@ footer {
   .hero { padding: 96px 1.5rem 96px; }
   .contact-grid { padding: 32px 18px 24px; }
 }
+
+@keyframes invert-pulse {
+  0% {
+    filter: invert(75);
+  }
+  50% {
+    filter: invert(75%);
+  }
+  100% {
+    filter: invert(0);
+  }
+}
+
   </style>
 </head>
 <body>
