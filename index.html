@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="particle-network.css">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,6 +45,34 @@
   --input-bg: hsla(var(--theme-hue) var(--theme-bg-saturation) calc(var(--theme-bg-lightness) + 3%) / 0.65);
   --mono: 'IBM Plex Mono', monospace;
   --serif: 'Cormorant Garamond', Georgia, serif;
+
+
+  --pn-bg:          #2a2a2a00;   /* background fill                  */
+  --pn-dot:         rgba(255, 255, 255, 0.408);  /* particle color  */
+  --pn-line:        rgba(230, 230, 230, 0.219);  /* connection line  */
+  --pn-line-near:   rgba(255, 255, 255, 0.147);  /* close-range line */
+  --pn-glow:        rgba(255, 255, 255, 0);  /* radial glow tint */
+
+    /* -- Canvas positioning -- */
+  #particle-network {
+    position: fixed;   /* change to absolute if inside a relative container */
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: var(--pn-bg);
+    display: block;
+  }
+  
+  /* -- Everything else sits above the canvas -- */
+  body > *:not(#particle-network) {
+    position: relative;
+    z-index: 1;
+  }
+
+
+
+
 }
 
 html, body { height: 100%; }
@@ -422,7 +451,10 @@ footer {
 }
 </style>
 </head>
+
 <body>
+
+  <canvas id="particle-network"></canvas>
 
 <nav>
   <div class="nav-cell nav-logo-cell">
@@ -632,13 +664,6 @@ document.querySelectorAll('.nav-cell:not(.nav-logo-cell):not(.nav-theme-cell)').
   cell.addEventListener('mouseleave', () => { if (iv) clearInterval(iv); el.textContent = orig; });
 });
 
-// ── THEME TOGGLE ──
-const knob = document.querySelector('.toggle-knob');
-let on = true;
-document.getElementById('theme-toggle').addEventListener('click', () => {
-  on = !on;
-  knob.style.right = on ? '3px' : '18px';
-});
 
 // ── FEATURE CARDS CLICK HANDLERS ──
 const cardLinks = {
@@ -682,6 +707,208 @@ document.addEventListener('click', (e) => {
     mobileMenu.classList.remove('active');
   }
 });
+
+/* ============================================================
+   PARTICLE NETWORK BACKGROUND — particle-network.js
+   Self-contained. No dependencies.
+   ============================================================
+
+   CONFIG — all tunable values live here.
+   ============================================================ */
+const PN_CONFIG = {
+  particleCount:    200,      // number of floating nodes
+  speed:            0.025,    // base drift speed (px/frame)
+  connectRadius:    400,     // max distance to draw a line (px)
+  dotRadius:        0.5,     // particle draw radius (px)
+  mouseRadius:      220,     // mouse repulsion / attraction zone (px)
+  mouseForce:       0.012,   // how strongly mouse repels particles
+  pulseSpeed:       0.018,   // opacity pulse frequency
+  fadeEdge:         0.08,    // fraction of canvas where particles fade out
+};
+
+/* ============================================================
+   INTERNALS — no need to touch below this line
+   ============================================================ */
+(function () {
+  const canvas = document.getElementById('particle-network');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const cfg = PN_CONFIG;
+
+  // Pull CSS token values at runtime so changing the CSS var
+  // automatically updates the canvas colours.
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(name).trim();
+  }
+
+  let W, H, particles = [];
+  let mouse = { x: -9999, y: -9999 };
+  let raf;
+
+  /* ---- Particle class ---- */
+  class Particle {
+    constructor() { this.reset(true); }
+
+    reset(randomY = false) {
+      this.x  = Math.random() * W;
+      this.y  = randomY ? Math.random() * H : (Math.random() < 0.5 ? -10 : H + 10);
+      this.vx = (Math.random() - 0.5) * cfg.speed * 2;
+      this.vy = (Math.random() - 0.5) * cfg.speed * 2;
+      // give very slow particles a nudge so nothing stalls
+      if (Math.abs(this.vx) < 0.05) this.vx += 0.05 * Math.sign(this.vx || 1);
+      if (Math.abs(this.vy) < 0.05) this.vy += 0.05 * Math.sign(this.vy || 1);
+      this.baseAlpha = 0.4 + Math.random() * 0.6;
+      this.phase     = Math.random() * Math.PI * 2;
+      this.r         = cfg.dotRadius * (0.6 + Math.random() * 0.8);
+    }
+
+    update(t) {
+      // mouse repulsion
+      const dx = this.x - mouse.x;
+      const dy = this.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < cfg.mouseRadius && dist > 0) {
+        const force = (1 - dist / cfg.mouseRadius) * cfg.mouseForce;
+        this.vx += (dx / dist) * force * 60;
+        this.vy += (dy / dist) * force * 60;
+      }
+
+      // soft velocity cap
+      const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      const maxSpeed = cfg.speed * 4;
+      if (speed > maxSpeed) {
+        this.vx = (this.vx / speed) * maxSpeed;
+        this.vy = (this.vy / speed) * maxSpeed;
+      }
+
+      // very gentle drift back to base speed to avoid total stall
+      this.vx *= 0.999;
+      this.vy *= 0.999;
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // wrap with a small margin
+      const pad = 20;
+      if (this.x < -pad)  this.x = W + pad;
+      if (this.x > W + pad) this.x = -pad;
+      if (this.y < -pad)  this.y = H + pad;
+      if (this.y > H + pad) this.y = -pad;
+
+      // edge fade
+      const ex = Math.min(this.x / (W * cfg.fadeEdge), (W - this.x) / (W * cfg.fadeEdge), 1);
+      const ey = Math.min(this.y / (H * cfg.fadeEdge), (H - this.y) / (H * cfg.fadeEdge), 1);
+      this.alpha = this.baseAlpha * Math.min(ex, ey) *
+        (0.7 + 0.3 * Math.sin(t * cfg.pulseSpeed + this.phase));
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = cssVar('--pn-dot').replace(')', `, ${this.alpha})`).replace('rgb', 'rgba');
+      // if token is already rgba, parse and replace alpha channel
+      ctx.fillStyle = applyAlpha(cssVar('--pn-dot'), this.alpha);
+      ctx.fill();
+    }
+  }
+
+  /* ---- Helpers ---- */
+  function applyAlpha(colorStr, alpha) {
+  const stripped = colorStr.replace(/rgba?\(/, '').replace(')', '');
+  const parts = stripped.split(',').map(Number);
+  // parts[3] is the alpha from your CSS var (defaults to 1 if rgb not rgba)
+  const baseAlpha = parts[3] !== undefined ? parts[3] : 1.0;
+  return `rgba(${parts[0]},${parts[1]},${parts[2]},${(alpha * baseAlpha).toFixed(3)})`;
+}
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: cfg.particleCount }, () => new Particle());
+  }
+
+  /* ---- Draw connections ---- */
+  function drawEdges() {
+    const near   = cssVar('--pn-line-near');
+    const far    = cssVar('--pn-line');
+    const r2     = cfg.connectRadius * cfg.connectRadius;
+
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a = particles[i], b = particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > r2) continue;
+
+        const t   = 1 - Math.sqrt(d2) / cfg.connectRadius;
+        const alp = t * Math.min(a.alpha, b.alpha);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = applyAlpha(t > 0.55 ? near : far, alp * (t > 0.55 ? 1 : 0.7));
+        ctx.lineWidth   = t * 0.9;
+        ctx.stroke();
+      }
+    }
+  }
+
+  /* ---- Radial ambient glow ---- */
+  function drawGlow() {
+    const glow = ctx.createRadialGradient(W * 0.5, H * 0.55, 0, W * 0.5, H * 0.55, W * 0.55);
+    glow.addColorStop(0,   cssVar('--pn-glow'));
+    glow.addColorStop(1,   'transparent');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ---- Main loop ---- */
+  let t = 0;
+  function loop() {
+    t++;
+    ctx.clearRect(0, 0, W, H);
+    drawGlow();
+    drawEdges();
+    particles.forEach(p => { p.update(t); p.draw(); });
+    raf = requestAnimationFrame(loop);
+  }
+
+  /* ---- Events ---- */
+  window.addEventListener('resize', () => { resize(); });
+
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  window.addEventListener('mouseleave', () => {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  // touch support
+  window.addEventListener('touchmove', e => {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  /* ---- Kick off ---- */
+  init();
+  loop();
+})();
+
+
 </script>
+<script src="particle-network.js"></script>
 </body>
 </html>
