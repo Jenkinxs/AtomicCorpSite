@@ -111,8 +111,7 @@ nav {
   display: grid;
   grid-template-columns: 220px 1fr 1fr 1fr 1fr 160px;
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
   background: var(--panel);
   backdrop-filter: blur(4px);
@@ -121,12 +120,27 @@ nav {
   align-items: stretch;
 }
 
+/* Extends nav background upward to cover overscroll rubber-band gap */
+nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 200vh;
+  background: var(--panel);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  z-index: -1;
+}
+
 .hamburger-btn {
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   width: 40px;
   min-width: 40px;
   height: 76px;
@@ -147,23 +161,21 @@ nav {
 }
 
 .hamburger-btn.active span:nth-child(1) {
-  transform: rotate(45deg) translate(10px, 10px);
+  transform: translateY(7px) rotate(45deg);
 }
 
 .hamburger-btn.active span:nth-child(2) {
   opacity: 0;
+  transform: scaleX(0);
 }
 
 .hamburger-btn.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -7px);
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 .mobile-menu {
   display: none;
-  position: fixed;
-  top: 76px;
-  left: 0;
-  right: 0;
+  width: 100%;
   background: var(--panel-strong);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -456,6 +468,7 @@ footer {
 
   <canvas id="particle-network"></canvas>
 
+<div id="nav-wrapper" style="position:sticky;top:0;z-index:100;">
 <nav>
   <div class="nav-cell nav-logo-cell">
     <a class="nav-logo" href="#">THE ATOMIC<br>CORPORATION</a>
@@ -478,6 +491,7 @@ footer {
   <a href="https://www.linkedin.com/in/tjenkins1/">LinkedIn</a>
   <a href="https://github.com/Jenkinxs/">GitHub</a>
   <a href="https://pricey-fish95.bandcamp.com/">Bandcamp</a>
+</div>
 </div>
 
 <div class="hero-wrapper">
@@ -702,7 +716,7 @@ mobileMenu.querySelectorAll('a').forEach(link => {
 
 // Close menu when clicking outside
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('nav') && !e.target.closest('.mobile-menu')) {
+  if (!e.target.closest('#nav-wrapper')) {
     hamburgerBtn.classList.remove('active');
     mobileMenu.classList.remove('active');
   }
