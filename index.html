@@ -261,7 +261,7 @@ nav::before {
 .hero-wrapper {
   position: relative;
   border-bottom: 1px solid var(--border);
-  overflow: visible;
+  overflow: hidden;
   min-height: 680px;
   display: flex;
   align-items: center;
@@ -346,7 +346,10 @@ nav::before {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--border);
-  text-shadow: 1px 1px 1px rgb(0, 0, 0); 
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .feature-card {
@@ -429,25 +432,24 @@ footer {
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   nav {
-    grid-template-columns: 220px 1fr 40px;
+    grid-template-columns: 1fr 40px;
   }
-  .nav-cell:not(.nav-logo-cell):not(.nav-theme-cell),
-  .nav-theme-cell {
+  .nav-cell:not(.nav-logo-cell) {
     display: none;
   }
   .hamburger-btn {
     display: flex;
   }
-}
-
-@media (max-width: 768px) {
-  nav {
-    grid-template-columns: 1fr 40px;
-  }
   .nav-logo {
     font-size: 16px;
     transition: font-size 0.3s ease;
   }
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  .feature-card:nth-child(3n) { border-right: none; }
+  .feature-card:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+  .feature-card:last-child { border-bottom: none; }
 }
 
 @keyframes invert-pulse {
@@ -477,8 +479,6 @@ footer {
   <a class="nav-cell" href="https://www.linkedin.com/in/tjenkins1/"><span class="nav-link-text" data-orig="LinkedIn">LinkedIn</span></a>
   <a class="nav-cell" href="https://github.com/Jenkinxs/"><span class="nav-link-text" data-orig="GitHub">GitHub</span></a>
   <a class="nav-cell" href="https://pricey-fish95.bandcamp.com/"><span class="nav-link-text" data-orig="Bandcamp">Bandcamp</span></a>
-  
-  </div>
   <button class="hamburger-btn" id="hamburger-menu">
     <span></span>
     <span></span>
@@ -893,7 +893,12 @@ const PN_CONFIG = {
   }
 
   /* ---- Events ---- */
-  window.addEventListener('resize', () => { resize(); });
+  window.addEventListener('resize', () => {
+    resize();
+    // Rescatter all particles proportionally to new dimensions
+    // so they don't bunch at the center line after a narrow→wide resize
+    particles.forEach(p => { p.reset(true); });
+  });
 
   window.addEventListener('mousemove', e => {
     mouse.x = e.clientX;
