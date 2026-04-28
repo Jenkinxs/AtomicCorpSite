@@ -350,6 +350,10 @@ nav::before {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+  background: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.15);
+  backdrop-filter: blur(0.0px);
+  -webkit-backdrop-filter: blur(0.0px);
+  
 }
 
 .feature-card {
@@ -359,6 +363,8 @@ nav::before {
   transition: background 0.18s;
   text-shadow: 1px 1px 1px rgb(0, 0, 0); 
   cursor: pointer;
+  
+  
 }
 .feature-card:nth-child(3n) { border-right: none; }
 .feature-card:nth-last-child(-n+3) { border-bottom: none; }
