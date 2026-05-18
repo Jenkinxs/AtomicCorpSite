@@ -70,7 +70,7 @@ body::before {
 
 nav {
   display: grid;
-  grid-template-columns: 220px 1fr 1fr 1fr 1fr 160px;
+  grid-template-columns: 300px 1fr 1fr 1fr 1fr 160px;
   border-bottom: 1px solid var(--border);
   position: relative;
   z-index: 100;
@@ -181,7 +181,7 @@ nav::before {
 }
 .nav-cell:last-child { border-right: none; }
 .nav-cell:hover { background: var(--surface-hover); }
-.nav-logo-cell { justify-content: flex-start; padding: 16px 24px; cursor: default; }
+.nav-logo-cell { justify-content: flex-start; padding: 16px 20px; cursor: default; }
 .nav-logo-cell:hover { background: transparent; }
 
 .nav-logo {
@@ -193,6 +193,15 @@ nav::before {
   color: var(--cream);
   text-transform: uppercase;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-logo img {
+  max-height: 44px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
 }
 
 .nav-link-text {
@@ -461,6 +470,7 @@ footer {
   nav { grid-template-columns: 1fr 40px; }
   .nav-cell:not(.nav-logo-cell) { display: none; }
   .hamburger-btn { display: flex; }
+  .nav-logo img { max-height: 40px; }
   .hero { padding: 96px 1.5rem 96px; }
   .contact-grid { padding: 32px 18px 24px; }
 }
@@ -471,7 +481,7 @@ footer {
 <div id="nav-wrapper" style="position:sticky;top:0;z-index:100;">
 <nav>
   <div class="nav-cell nav-logo-cell">
-    <a class="nav-logo" href="/">THE ATOMIC<br>CORPORATION</a>
+    <a class="nav-logo" href="/"><img src="../images/AtomicCorpLogo.png" alt="The Atomic Corporation Logo">THE ATOMIC<br>CORPORATION</a>
   </div>
   <a class="nav-cell" href="/contact/"><span class="nav-link-text" data-orig="Contact">Contact</span></a>
   <a class="nav-cell" href="https://www.linkedin.com/in/tjenkins1/"><span class="nav-link-text" data-orig="LinkedIn">LinkedIn</span></a>
