@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article · The Atomic Corporation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --theme-hue: 240;
+  --theme-bg-saturation: 60%;
+  --theme-bg-lightness: 3%;
+  --theme-panel-saturation: 22%;
+  --theme-panel-lightness: 10%;
+  --theme-accent-saturation: 18%;
+  --theme-accent-lightness: 78%;
+  --theme-text-saturation: 0%;
+  --theme-text-lightness: 83%;
+
+  --bg: hsl(var(--theme-hue) var(--theme-bg-saturation) var(--theme-bg-lightness));
+  --panel: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.70);
+  --panel-strong: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 1%) / 0.95);
+  --panel-soft: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 2%) / 0.45);
+  --surface-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 10%) / 0.06);
+  --surface-soft: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 12%) / 0.04);
+  --border: hsla(var(--theme-hue) var(--theme-accent-saturation) var(--theme-accent-lightness) / 0.13);
+  --border-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 8%) / 0.28);
+  --cream: hsl(var(--theme-hue) var(--theme-text-saturation) var(--theme-text-lightness));
+  --cream-dim: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 4%) calc(var(--theme-text-lightness) - 1%) / 0.55);
+  --cream-muted: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 8%) calc(var(--theme-text-lightness) - 3%) / 0.32);
+  --white: hsl(var(--theme-hue) calc(var(--theme-text-saturation) - 21%) calc(var(--theme-text-lightness) + 13%));
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --accent: #a88ccf;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--serif);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../images/7Plague.jpg');
+  background-position: bottom;
+  background-size: cover;
+  opacity: 0.12;
+  z-index: -1;
+}
+
+/* ── MINIMAL NAV ── */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.nav-bar a {
+  text-decoration: none;
+  color: var(--cream-dim);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+.nav-bar a:hover { color: var(--cream); }
+
+/* ── ARTICLE CONTENT ── */
+.article-wrapper {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 50px 28px;
+}
+
+.article-header {
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-header .back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--cream-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  transition: color 0.15s;
+}
+
+.article-header .back-link:hover { color: var(--cream); }
+
+.article-date {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.article-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+
+.article-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--cream-muted);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 0;
+}
+
+/* ── RENDERED MARKDOWN ── */
+.article-body {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--cream-dim);
+  line-height: 1.85;
+}
+
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  font-family: var(--serif);
+  color: var(--cream);
+  font-weight: 600;
+  margin-top: 1.6em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.article-body h1 { font-size: 1.6em; }
+.article-body h2 { font-size: 1.3em; }
+.article-body h3 { font-size: 1.1em; }
+
+.article-body p {
+  margin-bottom: 1.1em;
+}
+
+.article-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 0.5px;
+  transition: color 0.15s;
+}
+
+.article-body a:hover { color: var(--cream); }
+
+.article-body strong, .article-body b {
+  color: var(--cream);
+  font-weight: 600;
+}
+
+.article-body em, .article-body i {
+  font-style: italic;
+}
+
+.article-body blockquote {
+  border-left: 2px solid var(--accent);
+  margin: 1.4em 0;
+  padding: 0.6em 1.2em;
+  background: var(--surface-soft);
+  color: var(--cream-dim);
+  font-style: italic;
+}
+
+.article-body blockquote p {
+  margin-bottom: 0;
+}
+
+.article-body ul, .article-body ol {
+  margin: 0.8em 0 1.2em;
+  padding-left: 1.6em;
+}
+
+.article-body li {
+  margin-bottom: 0.4em;
+}
+
+.article-body pre {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  margin: 1.2em 0;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--cream);
+}
+
+.article-body code {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  background: var(--surface-soft);
+  padding: 1px 5px;
+  color: var(--cream);
+}
+
+.article-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.article-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+}
+
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2em auto;
+  border: 1px solid var(--border);
+}
+
+/* ── EMPTY / ERROR ── */
+.article-empty {
+  text-align: center;
+  padding: 100px 24px;
+  color: var(--cream-muted);
+}
+
+.article-empty p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.article-empty a {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  border: 1px solid var(--border);
+  padding: 10px 30px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.18s;
+}
+
+.article-empty a:hover {
+  border-color: var(--border-hover);
+  color: var(--cream);
+  background: var(--surface-soft);
+}
+
+/* ── FOOTER ── */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 36px;
+  border-top: 1px solid var(--border);
+}
+.footer-left { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); letter-spacing: 0.1em; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .article-wrapper { padding: 30px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <a href="/articles/">&larr; Articles</a>
+  <span></span>
+</div>
+
+<div id="article-container">
+  <!-- populated by JS -->
+</div>
+
+<footer>
+  <span class="footer-left">The Atomic Corporation</span>
+</footer>
+
+<script>
+// Lightweight markdown renderer (sufficient for formatted articles)
+function renderMarkdown(md) {
+  // Escape HTML first
+  let html = md
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Images before links
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+
+  // Links
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Bold and italic
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<em><strong>$1</strong></em>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+
+  // Horizontal rules
+  html = html.replace(/^---+$/gm, '<hr>');
+
+  // Blockquotes
+  html = html.replace(/^&gt;\s?(.*)$/gm, (m, c) => c ? `<blockquote><p>${c}</p></blockquote>` : '');
+
+  // Headings
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+  // Code blocks (fenced)
+  html = html.replace(/<pre><code>[\s\S]*?<\/code><\/pre>/g, ''); // remove pre already handled
+  html = html.replace(/`{3}(\w*)\n([\s\S]*?)`{3}/g, '<pre><code>$2</code></pre>');
+
+  // Lists
+  html = html.replace(/^(\s*)[-*]\s+(.+)$/gm, '$1<li>$2</li>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+
+  html = html.replace(/^(\s*)\d+\.\s+(.+)$/gm, '$1<li>$2</li>');
+  html = html.replace(/(?:^<li>.*<\/li>$\n?)+/gm, function(m) {
+    // Only wrap if not already in <ol>
+    if (m.includes('<ol>')) return m;
+    return '<ol>' + m + '</ol>';
+  });
+
+  // Paragraphs: wrap orphan text in <p> tags
+  const lines = html.split('\n');
+  const result = [];
+  let inBlock = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const isBlock = /^<(h[1-4]|ul|ol|li|blockquote|pre|hr|img|table)/.test(trimmed)
+      || /^<\/(ul|ol|blockquote|pre)>/.test(trimmed)
+      || trimmed === '<hr>'
+      || trimmed === ''
+      || /^<li>/.test(trimmed);
+    if (isBlock) {
+      result.push(line);
+    } else {
+      result.push(`<p>${trimmed}</p>`);
+    }
+  }
+
+  return result.join('\n');
+}
+
+// Load article
+const params = new URLSearchParams(window.location.search);
+const articleId = params.get('id');
+
+const container = document.getElementById('article-container');
+
+if (!articleId) {
+  container.innerHTML = `<div class="article-empty">
+    <p>No article specified.</p>
+    <a href="index.html">Back to Articles</a>
+  </div>`;
+} else {
+  fetch('data/articles.json')
+    .then(r => r.json())
+    .then(articles => {
+      const article = articles.find(a => a.id === articleId);
+      if (!article) {
+        container.innerHTML = `<div class="article-empty">
+          <p>Article not found.</p>
+          <a href="index.html">Back to Articles</a>
+        </div>`;
+        return;
+      }
+
+      const date = new Date(article.date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const tags = (article.tags || []).map(t => `<span class="article-tag">${t}</span>`).join('');
+
+      document.title = article.title + ' · The Atomic Corporation';
+
+      container.innerHTML = `
+        <div class="article-wrapper">
+          <div class="article-header">
+            <a class="back-link" href="index.html">&larr; All Articles</a>
+            <div class="article-date">${date}</div>
+            <h1 class="article-title">${article.title}</h1>
+            <div class="article-tags">${tags}</div>
+          </div>
+          <div class="article-body">${renderMarkdown(article.content || '')}</div>
+        </div>
+      `;
+    })
+    .catch(() => {
+      container.innerHTML = `<div class="article-empty">
+        <p>Failed to load articles.</p>
+        <a href="index.html">Back to Articles</a>
+      </div>`;
+    });
+}
+</script>
+</body>
+</html>

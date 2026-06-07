@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Articles · The Atomic Corporation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --theme-hue: 240;
+  --theme-bg-saturation: 60%;
+  --theme-bg-lightness: 3%;
+  --theme-panel-saturation: 22%;
+  --theme-panel-lightness: 10%;
+  --theme-accent-saturation: 18%;
+  --theme-accent-lightness: 78%;
+  --theme-text-saturation: 0%;
+  --theme-text-lightness: 83%;
+
+  --bg: hsl(var(--theme-hue) var(--theme-bg-saturation) var(--theme-bg-lightness));
+  --panel: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.70);
+  --panel-strong: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 1%) / 0.95);
+  --panel-soft: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 2%) / 0.45);
+  --surface-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 10%) / 0.06);
+  --surface-soft: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 12%) / 0.04);
+  --grid-line: hsla(var(--theme-hue) var(--theme-bg-saturation) calc(var(--theme-accent-lightness) - 2%) / 0.035);
+  --vignette: hsla(var(--theme-hue) var(--theme-bg-saturation) calc(var(--theme-bg-lightness) + 3%) / 0.70);
+  --border: hsla(var(--theme-hue) var(--theme-accent-saturation) var(--theme-accent-lightness) / 0.13);
+  --border-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 8%) / 0.28);
+  --cream: hsl(var(--theme-hue) var(--theme-text-saturation) var(--theme-text-lightness));
+  --cream-dim: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 4%) calc(var(--theme-text-lightness) - 1%) / 0.55);
+  --cream-muted: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 8%) calc(var(--theme-text-lightness) - 3%) / 0.32);
+  --white: hsl(var(--theme-hue) calc(var(--theme-text-saturation) - 21%) calc(var(--theme-text-lightness) + 13%));
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --accent: #a88ccf;
+  --accent-dim: rgba(168, 140, 207, 0.4);
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--serif);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../images/7Plague.jpg');
+  background-position: bottom;
+  background-size: cover;
+  opacity: 0.12;
+  z-index: -1;
+}
+
+/* ── NAV (contact style) ── */
+nav {
+  display: grid;
+  grid-template-columns: 300px 1fr 1fr 1fr 1fr 160px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 100;
+  background: var(--panel);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: grid-template-columns 0.3s ease;
+  align-items: stretch;
+}
+
+nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 200vh;
+  background: var(--panel);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  min-width: 40px;
+  height: 76px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+  padding: 8px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--cream-dim);
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn.active span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-btn.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-menu {
+  display: none;
+  width: 100%;
+  background: var(--panel-strong);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  z-index: 99;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-menu.active { display: flex; }
+
+.mobile-menu a {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--cream-dim);
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--serif);
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.mobile-menu a:hover {
+  background: var(--surface-hover);
+  color: var(--cream);
+}
+
+.nav-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 76px;
+  text-decoration: none;
+  position: relative;
+}
+.nav-cell:last-child { border-right: none; }
+.nav-cell:hover { background: var(--surface-hover); }
+.nav-logo-cell { justify-content: flex-start; padding: 16px 20px; cursor: default; }
+.nav-logo-cell:hover { background: transparent; }
+
+.nav-logo {
+  font-family: "Bodoni Moda", serif;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  line-height: 1.15;
+  color: var(--cream);
+  text-transform: uppercase;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-logo img {
+  max-height: 44px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+
+.nav-link-text {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.0em;
+  color: var(--cream-dim);
+  text-transform: uppercase;
+  user-select: none;
+  transition: color 0.15s;
+}
+.nav-cell:hover .nav-link-text { color: var(--cream); }
+
+/* ── HERO ── */
+.page-hero {
+  text-align: center;
+  padding: 80px 24px 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 1px rgb(0,0,0);
+}
+
+.page-hero p {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--white);
+  max-width: 520px;
+  margin: 0 auto 20px;
+  line-height: 1.7;
+}
+
+.page-hero .new-article-btn {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  border: 1px solid var(--border);
+  padding: 10px 24px;
+  text-decoration: none;
+  transition: all 0.18s;
+}
+.page-hero .new-article-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--cream);
+  background: var(--surface-soft);
+}
+
+/* ── ARTICLE GRID ── */
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.article-card {
+  padding: 32px 28px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.18s;
+  position: relative;
+}
+
+.article-card:hover {
+  background: var(--surface-hover);
+}
+
+.article-card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+.card-date {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.15em;
+  color: var(--accent-dim);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.card-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.card-summary {
+  font-family: var(--serif);
+  font-size: 14.5px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--cream-dim);
+  line-height: 1.55;
+  flex: 1;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.card-tags {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cream-muted);
+  letter-spacing: 0.08em;
+}
+
+.card-arrow {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(0);
+  transition: all 0.2s ease;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--cream-muted);
+}
+
+.empty-state p {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.empty-state .start-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  border: 1px solid var(--border);
+  padding: 10px 30px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.18s;
+}
+.empty-state .start-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--cream);
+  background: var(--surface-soft);
+}
+
+/* ── MORE ROW ── */
+.more-row {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  padding: 28px;
+}
+
+.more-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 10px 30px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.18s;
+}
+.more-btn:hover { border-color: var(--border-hover); color: var(--cream); background: var(--surface-soft); }
+
+/* ── FOOTER ── */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 36px;
+  border-top: 1px solid var(--border);
+}
+.footer-left { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); letter-spacing: 0.1em; }
+.footer-right { display: flex; gap: 28px; }
+.footer-right a { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); text-decoration: none; letter-spacing: 0.1em; transition: color 0.15s; }
+.footer-right a:hover { color: var(--cream-dim); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { grid-template-columns: 1fr 40px; }
+  .nav-cell:not(.nav-logo-cell) { display: none; }
+  .hamburger-btn { display: flex; }
+  .page-hero { padding: 60px 20px 30px; }
+  .articles-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div id="nav-wrapper" style="position:sticky;top:0;z-index:100;">
+<nav>
+  <div class="nav-cell nav-logo-cell">
+    <a class="nav-logo" href="https://www.atomiccorp.org/"><img src="../images/AtomicCorpLogo2.png" alt="The Atomic Corporation Logo">&nbsp;THE ATOMIC<br>&nbsp;CORPORATION</a>
+  </div>
+  <a class="nav-cell" href="/articles/"><span class="nav-link-text" data-orig="Articles">Articles</span></a>
+  <a class="nav-cell" href="/contact/"><span class="nav-link-text" data-orig="Contact">Contact</span></a>
+  <a class="nav-cell" href="https://www.linkedin.com/in/tjenkins1/"><span class="nav-link-text" data-orig="LinkedIn">LinkedIn</span></a>
+  <a class="nav-cell" href="https://github.com/Jenkinxs/"><span class="nav-link-text" data-orig="GitHub">GitHub</span></a>
+  <button class="hamburger-btn" id="hamburger-menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/">Home</a>
+  <a href="/articles/">Articles</a>
+  <a href="/contact/">Contact</a>
+  <a href="https://github.com/Jenkinxs/">GitHub</a>
+</div>
+</div>
+
+<section class="page-hero">
+  <h1>Articles</h1>
+  <p>Writing, notes, and other ephemera from the corporation.</p>
+  <a class="new-article-btn" href="editor.html">Write New Article</a>
+</section>
+
+<div class="articles-grid" id="articles-grid">
+  <!-- Populated by JS from articles.json -->
+</div>
+
+<div class="more-row">
+  <a class="more-btn" href="index.html">Back To Top</a>
+</div>
+
+<footer>
+  <span class="footer-left">The Atomic Corporation</span>
+  <div class="footer-right">
+    <a href="/">atomiccorp.org</a>
+  </div>
+</footer>
+
+<script>
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=*+-><';
+function scramble(el, target, ms) {
+  const frames = Math.floor(ms / 35);
+  let f = 0;
+  const iv = setInterval(() => {
+    f++;
+    const prog = f / frames;
+    el.textContent = target.split('').map((ch, i) => {
+      if (ch === ' ') return ' ';
+      if (i < Math.floor(prog * target.length)) return ch;
+      return CHARS[Math.floor(Math.random() * CHARS.length)];
+    }).join('');
+    if (f >= frames) { clearInterval(iv); el.textContent = target; }
+  }, 35);
+  return iv;
+}
+
+document.querySelectorAll('.nav-cell:not(.nav-logo-cell)').forEach(cell => {
+  const el = cell.querySelector('.nav-link-text');
+  if (!el) return;
+  const orig = el.dataset.orig || el.textContent.trim();
+  let iv = null;
+  cell.addEventListener('mouseenter', () => { if (iv) clearInterval(iv); iv = scramble(el, orig, 420); });
+  cell.addEventListener('mouseleave', () => { if (iv) clearInterval(iv); el.textContent = orig; });
+});
+
+const hamburgerBtn = document.getElementById('hamburger-menu');
+const mobileMenu = document.getElementById('mobile-menu');
+
+hamburgerBtn.addEventListener('click', () => {
+  hamburgerBtn.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+});
+
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburgerBtn.classList.remove('active');
+    mobileMenu.classList.remove('active');
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#nav-wrapper')) {
+    hamburgerBtn.classList.remove('active');
+    mobileMenu.classList.remove('active');
+  }
+});
+
+// ── Load articles from manifest ──
+fetch('data/articles.json')
+  .then(r => r.json())
+  .then(articles => {
+    const grid = document.getElementById('articles-grid');
+    if (!articles || articles.length === 0) {
+      grid.innerHTML = `<div class="empty-state">
+        <p>No articles yet.</p>
+        <a class="start-btn" href="editor.html">Write the first one</a>
+      </div>`;
+      return;
+    }
+    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    articles.forEach(article => {
+      const date = new Date(article.date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+      });
+      const tags = (article.tags || []).join(' &middot; ');
+      const card = document.createElement('a');
+      card.className = 'article-card';
+      card.href = 'article.html?id=' + encodeURIComponent(article.id);
+      card.innerHTML = `
+        <span class="card-date">${date}</span>
+        <h2 class="card-title">${article.title}</h2>
+        <p class="card-summary">${article.summary || ''}</p>
+        <div class="card-footer">
+          <span class="card-tags">${tags}</span>
+          <span class="card-arrow">&rarr;</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  })
+  .catch(err => {
+    document.getElementById('articles-grid').innerHTML =
+      `<div class="empty-state"><p>Failed to load articles.</p></div>`;
+  });
+</script>
+</body>
+</html>
