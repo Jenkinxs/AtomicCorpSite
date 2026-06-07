@@ -408,42 +408,58 @@ if (!articleId) {
     <a href="index.html">Back to Articles</a>
   </div>`;
 } else {
-  fetch('data/articles.json')
-    .then(r => r.json())
-    .then(articles => {
-      const article = articles.find(a => a.id === articleId);
-      if (!article) {
-        container.innerHTML = `<div class="article-empty">
-          <p>Article not found.</p>
-          <a href="index.html">Back to Articles</a>
-        </div>`;
-        return;
-      }
-
-      const date = new Date(article.date).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'long', day: 'numeric'
-      });
-      const tags = (article.tags || []).map(t => `<span class="article-tag">${t}</span>`).join('');
-
-      document.title = article.title + ' · The Atomic Corporation';
-
-      container.innerHTML = `
-        <div class="article-wrapper">
-          <div class="article-header">
-            <a class="back-link" href="index.html">&larr; All Articles</a>
-            <div class="article-date">${date}</div>
-            <h1 class="article-title">${article.title}</h1>
-            <div class="article-tags">${tags}</div>
-          </div>
-          <div class="article-body">${renderMarkdown(article.content || '')}</div>
+  // Try the API first (for articles created via the server editor),
+  // then fall back to the static articles.json manifest.
+  function renderArticle(article) {
+    const date = new Date(article.date).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+    const tags = (article.tags || []).map(t => `<span class="article-tag">${t}</span>`).join('');
+    document.title = article.title + ' · The Atomic Corporation';
+    container.innerHTML = `
+      <div class="article-wrapper">
+        <div class="article-header">
+          <a class="back-link" href="index.html">&larr; All Articles</a>
+          <div class="article-date">${date}</div>
+          <h1 class="article-title">${article.title}</h1>
+          <div class="article-tags">${tags}</div>
         </div>
-      `;
+        <div class="article-body">${renderMarkdown(article.content || '')}</div>
+      </div>
+    `;
+  }
+
+  function showNotFound() {
+    container.innerHTML = `<div class="article-empty">
+      <p>Article not found.</p>
+      <a href="index.html">Back to Articles</a>
+    </div>`;
+  }
+
+  function showError() {
+    container.innerHTML = `<div class="article-empty">
+      <p>Failed to load articles.</p>
+      <a href="index.html">Back to Articles</a>
+    </div>`;
+  }
+
+  // Step 1: try the live API
+  fetch('/api/articles/' + encodeURIComponent(articleId))
+    .then(r => {
+      if (r.ok) return r.json();
+      throw new Error('not found');
     })
+    .then(article => renderArticle(article))
     .catch(() => {
-      container.innerHTML = `<div class="article-empty">
-        <p>Failed to load articles.</p>
-        <a href="index.html">Back to Articles</a>
-      </div>`;
+      // Step 2: fall back to static JSON manifest
+      fetch('data/articles.json')
+        .then(r => r.json())
+        .then(articles => {
+          const article = articles.find(a => a.id === articleId);
+          if (article) renderArticle(article);
+          else showNotFound();
+        })
+        .catch(() => showError());
     });
 }
 </script>

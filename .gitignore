@@ -1,1 +1,3 @@
 articles/data/articles.db
+*.swp
+*.kate-swp

@@ -525,42 +525,53 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// ── Load articles from manifest ──
-fetch('data/articles.json')
-  .then(r => r.json())
-  .then(articles => {
-    const grid = document.getElementById('articles-grid');
-    if (!articles || articles.length === 0) {
-      grid.innerHTML = `<div class="empty-state">
-        <p>No articles yet.</p>
-        <a class="start-btn" href="editor.html">Write the first one</a>
-      </div>`;
-      return;
-    }
-    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
-    articles.forEach(article => {
-      const date = new Date(article.date).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric'
-      });
-      const tags = (article.tags || []).join(' &middot; ');
-      const card = document.createElement('a');
-      card.className = 'article-card';
-      card.href = 'article.html?id=' + encodeURIComponent(article.id);
-      card.innerHTML = `
-        <span class="card-date">${date}</span>
-        <h2 class="card-title">${article.title}</h2>
-        <p class="card-summary">${article.summary || ''}</p>
-        <div class="card-footer">
-          <span class="card-tags">${tags}</span>
-          <span class="card-arrow">&rarr;</span>
-        </div>
-      `;
-      grid.appendChild(card);
+// ── Load articles (API first, then static manifest) ──
+function renderArticles(articles) {
+  const grid = document.getElementById('articles-grid');
+  if (!articles || articles.length === 0) {
+    grid.innerHTML = `<div class="empty-state">
+      <p>No articles yet.</p>
+      <a class="start-btn" href="editor.html">Write the first one</a>
+    </div>`;
+    return;
+  }
+  articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+  articles.forEach(article => {
+    const date = new Date(article.date).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
     });
+    const tags = (article.tags || []).join(' &middot; ');
+    const card = document.createElement('a');
+    card.className = 'article-card';
+    card.href = 'article.html?id=' + encodeURIComponent(article.id);
+    card.innerHTML = `
+      <span class="card-date">${date}</span>
+      <h2 class="card-title">${article.title}</h2>
+      <p class="card-summary">${article.summary || ''}</p>
+      <div class="card-footer">
+        <span class="card-tags">${tags}</span>
+        <span class="card-arrow">&rarr;</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// Try the live API first, fall back to static JSON
+fetch('/api/articles')
+  .then(r => {
+    if (r.ok) return r.json();
+    throw new Error('API not available');
   })
-  .catch(err => {
-    document.getElementById('articles-grid').innerHTML =
-      `<div class="empty-state"><p>Failed to load articles.</p></div>`;
+  .then(articles => renderArticles(articles))
+  .catch(() => {
+    fetch('data/articles.json')
+      .then(r => r.json())
+      .then(articles => renderArticles(articles))
+      .catch(() => {
+        document.getElementById('articles-grid').innerHTML =
+          `<div class="empty-state"><p>Failed to load articles.</p></div>`;
+      });
   });
 </script>
 </body>
