@@ -4,26 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cloud — The Atomic Corporation</title>
-<meta name="description" content="Internal services on the atomic network: Athena, the localised cloud system, and three synchronisation nodes.">
-<meta name="page-type" content="software">
-<meta name="site-kind" content="software">
-<meta name="theme-color" content="#efe3c8">
+<meta name="description" content="Internal services on the atomic network.">
+<meta name="theme-color" content="#f2e6c9">
 <meta name="robots" content="noindex">
 <link rel="icon" href="../images/favicon.ico" sizes="any">
-<link rel="preload" href="../assets/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/Anton-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/site.css">
+<script>document.documentElement.className+=" js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="bar">
-    <div class="bar-mark">
-        <span class="bar-glyph">&#9632;</span>
-        <b>The Atomic Corporation</b>
-    </div>
+    <div class="bar-mark"><span class="sq"></span><span>The Atomic Corporation</span></div>
     <nav class="bar-nav" aria-label="Primary">
-        <a href="../index.html#catalogue">Catalogue</a>
-        <a href="../index.html#workshop">Workshop</a>
+        <a href="../index.html#systems">Systems</a>
         <a href="../articles/">Writing</a>
         <a href="." aria-current="page">Cloud</a>
         <a href="../contact/">Contact</a>
@@ -35,82 +30,51 @@
 <main id="main">
     <div class="shell">
         <div class="page-head">
-            <div class="plate-head">
-                <span class="no">Plate 06</span>
-                <span class="rule" aria-hidden="true"></span>
-                <span class="folio">Cloud &middot; internal</span>
-            </div>
-            <h1>Cloud<br>dashboard.</h1>
-            <p class="lede">
-                Services reachable from inside the atomic network. Not a product,
-                not a portal: a switchboard for machines that already trust each other.
-            </p>
+            <h1>Cloud <em>dashboard</em></h1>
+            <p class="sub">Internal only. Reachable from inside the atomic network.</p>
         </div>
 
-        <section class="plate" style="border-bottom:0">
-            <p class="micro" style="margin-bottom:14px">Five services &middot; cloud.atomiccorp.org</p>
-
+        <div style="padding:34px 0 60px">
+            <p class="col-head">Five services</p>
             <div class="svc">
                 <a href="http://cloud.atomiccorp.org:8787">
                     <span class="n">01</span>
-                    <span>
-                        <span class="t">Athena</span>
-                        <span class="d">Local access to the Athena instance</span>
-                    </span>
+                    <span><span class="t">Athena</span><span class="d">Local access to the Athena instance</span></span>
                     <span class="p">:8787</span>
                 </a>
                 <a href="http://cloud.atomiccorp.org:4012">
                     <span class="n">02</span>
-                    <span>
-                        <span class="t">Cloud</span>
-                        <span class="d">Localised cloud system</span>
-                    </span>
+                    <span><span class="t">Cloud</span><span class="d">Localised cloud system</span></span>
                     <span class="p">:4012</span>
                 </a>
                 <a href="http://cloud.atomiccorp.org:8384">
                     <span class="n">03</span>
-                    <span>
-                        <span class="t">Atomic5</span>
-                        <span class="d">Synchronisation, node one</span>
-                    </span>
+                    <span><span class="t">Atomic5</span><span class="d">Synchronisation, node one</span></span>
                     <span class="p">:8384</span>
                 </a>
                 <a href="http://cloud.atomiccorp.org:8385">
                     <span class="n">04</span>
-                    <span>
-                        <span class="t">Prime</span>
-                        <span class="d">Synchronisation, node two</span>
-                    </span>
+                    <span><span class="t">Prime</span><span class="d">Synchronisation, node two</span></span>
                     <span class="p">:8385</span>
                 </a>
                 <a href="http://cloud.atomiccorp.org:8387">
                     <span class="n">05</span>
-                    <span>
-                        <span class="t">Remote</span>
-                        <span class="d">Synchronisation, node three</span>
-                    </span>
+                    <span><span class="t">Remote</span><span class="d">Synchronisation, node three</span></span>
                     <span class="p">:8387</span>
                 </a>
             </div>
-
-            <div class="cat-note" style="margin-top:16px">
-                <span>Plain HTTP &middot; inside the mesh only</span>
+            <p class="note-line">
+                <span>Plain HTTP &middot; mesh only</span>
                 <span>No public ingress</span>
-            </div>
-
-            <p class="prose" style="margin-top:34px">
-                These links resolve only on the atomic network. If a service does not
-                answer, the node is down or you are not on the mesh &mdash; the dashboard
-                cannot tell you which, so check the network first.
             </p>
-        </section>
+        </div>
     </div>
 </main>
 
 <footer class="foot">
     <span>The Atomic Corporation &middot; atomiccorp.org</span>
     <div class="set">
-        <a href="#main">Back to top</a>
+        <a href="#top">Back to top</a>
         <a href="../index.html">Home</a>
         <span>&copy; 2026</span>
     </div>

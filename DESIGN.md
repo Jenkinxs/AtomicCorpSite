@@ -1,91 +1,97 @@
 # Design system — atomiccorp.org
 
-The site is a **systems catalogue**: every page is a numbered plate from a technical
-document. It borrows the visual language of r/textmodefuturism — character-cell grids,
-monospace type, hard registration marks, dithered fills, spec-sheet density — and applies
-it as an interface system rather than as decoration.
+Bold textmode futurism. Print-poster colour, four type voices, live generated graphics,
+and almost no prose. The site says what the company does and stops.
 
-## Why this world
+## Palette
 
-The company sells small, specific software and then operates it. A parts catalogue is the
-honest metaphor: each system is an entry with a designation, a function, a licence, and a
-release state. Nothing is a platform, so nothing is presented as one.
-
-## Tokens
+Sampled from the r/textmodefuturism reference corpus, then pushed louder.
 
 | Token | Value | Use |
 |---|---|---|
-| `--paper` | `#EFE3C8` | Ground. Sampled from the reference corpus. |
-| `--paper-lift` | `#F5ECD8` | Raised surfaces, figure plates, row hover. |
-| `--paper-deep` | `#E6D8B8` | Inline code, active nav cell. |
-| `--ink` | `#12110C` | Primary text, rules, plate frames. |
-| `--ink-2` | `#4A473A` | Body copy. 7.32:1 on paper. |
-| `--ink-3` | `#5E5946` | Secondary labels. 5.51:1. |
-| `--ink-4` | `#6B6550` | Tertiary numerals, leaders. 4.58:1. |
-| `--rule` | `#CDBF9C` | Hairline row dividers. |
-| `--rule-strong` | `#B3A47E` | Structural dividers. |
-| `--olive` | `#4F4E28` | Isometric side faces, copyleft state. |
-| `--olive-lt` | `#8A8758` | Public state dot. |
-| `--accent` | `#C1500E` | Fills, rules, large display. |
-| `--accent-ink` | `#A8430A` | Accent text at small sizes. 4.75:1. |
-| `--signal` | `#0B4FD8` | Focus rings only. |
+| `--paper` | `#F2E6C9` | Ground. |
+| `--paper-3` | `#F8F0DC` | Text on dark fills. |
+| `--ink` | `#0C0C08` | Display type, rules, dark bands. |
+| `--ink-2` | `#3B382C` | Body. 9.47:1 on paper. |
+| `--ink-3` | `#5C5745` | Secondary labels. 5.83:1. |
+| `--vermilion` | `#E8401A` | Brand accent: headline word, rules, index numbers. |
+| `--vermilion-fill` | `#C73512` | Any fill that carries text. 4.68:1 with paper-3. |
+| `--amber` | `#F0A018` | Land on the globe, script accents, hover numerals. |
+| `--azure` | `#1F6FEB` | System 02 hover fill. |
+| `--azure-fill` | `#1550C4` | Azure when it carries text. 6.21:1. |
+| `--olive` | `#4A4A24` | System 03 hover fill. |
+| `--teal` | `#23302E` | Globe plate, contact band, flow band. |
+| `--sea` | `#6E7B7B` | Muted marks. |
 
-Contrast is verified, not eyeballed. `--accent` at 3.73:1 is never used for small text;
-`--accent-ink` exists for that.
+Rule: a fill may only carry text if it is a `-fill` token. Vivid `--vermilion` is for
+large display and non-text marks.
 
 ## Type
 
-One face: **Departure Mono** (SIL OFL 1.1), self-hosted, 22 KB woff2.
+Four faces, four jobs, no overlap.
 
-Hierarchy comes from scale, case, tracking, and colour — never from a second family.
-Display is uppercase at `clamp(40px, 6.6vw, 96px)` with `-0.035em` tracking. Micro labels
-are 10.5px at `0.18em`. Body is 15px / 1.62, measure capped at 44ch in the masthead and
-`64ch` in documents.
+| Role | Face | Where |
+|---|---|---|
+| Display | **Anton** | Wordmark, section heads, system names, page titles. |
+| Script | **Pinyon Script** | One flourish per page: "for everything you do", "systems", "to us". |
+| Serif | **Bodoni Moda** | The deck line. Roman, never italic — that voice belongs to the script. |
+| Mono | **Departure Mono** | Nav, labels, data, tags, body of documents. |
 
-Monospace is earned here: the content is genuinely data — model codes, licences, commit
-dates, port numbers.
+All self-hosted woff2, all SIL OFL 1.1. No hosted font stylesheet.
 
-## Plate apparatus
+The pairing is the point: condensed grotesque shouted against a delicate script, with
+mono as the machine layer underneath.
 
-- `.plate` — a section bounded by a rule, carrying `.plate-head` (number, rule, folio).
-- `.plate-corners` — registration crosses at two corners, drawn from an inline SVG data URI.
-- `.figplate` — a framed figure with a solid ink header bar, a gridded stage, and a footer.
-- `.cat` — datasheet table with `colgroup` widths, tabular numerals, top-aligned cells.
-- `.ledger` — article index; date rail, title, summary, arrow.
-- `.chan` — channel list with dotted leaders.
-- `.doc` — long-form measure for policy and article bodies.
+## Generated graphics
 
-Heavy rules (1px ink) start a list or table. Light rules (`--rule`) divide rows. That
-grammar is consistent across every page.
+Nothing here is a stock image. Both visuals are drawn at runtime.
+
+**The globe** (`#globe`) is a textmode Earth. A 144×72 land mask, decoded from a 1,728-byte
+base64 string embedded in `site.js`, is sampled per character cell and projected
+orthographically with a 20° axial tilt. Land is `█` on the limb and `▒` inside, in amber,
+with alpha scaled by depth. The graticule is drawn as real strokes — parallels and
+meridians every 30°, a vermilion equator, a rim — so the "WIRE MESH" caption is true.
+It rotates continuously; under reduced motion it holds one frame.
+
+The mask was rasterised from Natural Earth `land-110m` TopoJSON with longitudes unwrapped
+across the antimeridian, which is what removes the horizontal streak artefact.
+
+**The flow band** (`#flow`) is a character field: ~42% of cells seeded with glyphs, drifting
+right at per-particle speeds, displaced vertically by a sine wave, coloured from the
+palette. It is the "materials moving through the factory" idea as texture.
+
+**The marquee** is duplicated text translated −50% on a 26s loop, with edge fades in the
+band colour so the seam never reads as a cut.
 
 ## Motion
 
-One authored moment: the masthead elements enter once on load, staggered 70 ms, from an
-already-visible default via `cubic-bezier(0.16, 1, 0.3, 1)`.
+One entrance: hero elements rise 14px and fade once on load, staggered 60–270ms, from an
+already-visible default. Gated behind a `.js` class added in `<head>` so a JS failure
+never leaves the page blank.
 
-The flow diagram's input connectors run a dashed stroke animation, paused until the figure
-is in view. Nothing moves on scroll otherwise. No parallax, no card fades, no tilt.
+System rows fill with colour on hover via a `translateY(101%)` pseudo-element on a
+0.42s ease. The name grows an arrow. The tag border brightens.
 
-All of it collapses under `prefers-reduced-motion: reduce`.
+Everything collapses under `prefers-reduced-motion: reduce`; the canvases draw one static
+frame instead of looping.
 
 ## Browser surfaces
 
-Selection is accent-on-paper-lift. Focus is a 2px signal-blue ring at 3px offset. The
-caret is accent-coloured. Scrollbars are themed `--rule-strong` on `--paper`. Numerals in
-tables are `tabular-nums`.
+Selection is vermilion on paper-3. Focus is a 3px azure ring at 3px offset. Scrollbars are
+vermilion on paper. Numerals are `tabular-nums`.
 
-## What this deliberately is not
+## Content
 
-- No card grid of icon-plus-heading-plus-text.
-- No eyebrow above a heading.
-- No gradient text, glass, or zero-blur offset shadows.
-- No invented metrics, reviews, or customers. Every number on the site is derived from a
-  real repository: language, licence, first-commit date, public/private state.
-- No contact form that cannot send. The contact page gives an address and a working
-  `mailto:` action instead.
+Short. Each system is a name and one line. No ledes, no margin notes, no excerpts.
+Every fact is real: language, licence, first commit, public/private state, all pulled from
+the actual repositories.
 
-## Content rules
+Release vocabulary is one axis: **Public**, **GPL-3.0**, **Source**, **Private**.
 
-Model codes (`AT-2025`, `SN-2026`) tie the catalogue table to the flow diagram so the two
-figures cross-reference. Release vocabulary is one axis only: **Public** (repository and
-licence), **Source** (repository only), **Private** (not distributed).
+## What this is not
+
+- No card grid of icon plus heading plus text.
+- No gradient text, glass, or soft shadows. The one shadow is a hard offset block, and the
+  world earned it.
+- No invented metrics, customers, or reviews.
+- No contact form that cannot send.

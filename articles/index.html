@@ -4,25 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Writing — The Atomic Corporation</title>
-<meta name="description" content="Notes from the workshop: what was built, what broke, and what was learned. Markdown, committed to the repository, served as plain files.">
-<meta name="page-type" content="read">
-<meta name="site-kind" content="software">
-<meta name="theme-color" content="#efe3c8">
+<meta name="description" content="Notes on what was built and what broke.">
+<meta name="theme-color" content="#f2e6c9">
 <link rel="icon" href="../images/favicon.ico" sizes="any">
-<link rel="preload" href="../assets/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/Anton-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/site.css">
+<script>document.documentElement.className+=" js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="bar">
-    <div class="bar-mark">
-        <span class="bar-glyph">&#9632;</span>
-        <b>The Atomic Corporation</b>
-    </div>
+    <div class="bar-mark"><span class="sq"></span><span>The Atomic Corporation</span></div>
     <nav class="bar-nav" aria-label="Primary">
-        <a href="../index.html#catalogue">Catalogue</a>
-        <a href="../index.html#workshop">Workshop</a>
+        <a href="../index.html#systems">Systems</a>
         <a href="." aria-current="page">Writing</a>
         <a href="../cloud/">Cloud</a>
         <a href="../contact/">Contact</a>
@@ -34,35 +29,27 @@
 <main id="main">
     <div class="shell">
         <div class="page-head">
-            <div class="plate-head">
-                <span class="no">Plate 03</span>
-                <span class="rule" aria-hidden="true"></span>
-                <span class="folio">Writing &middot; the forum</span>
-            </div>
-            <h1>Notes from<br>the workshop.</h1>
-            <p class="lede">
-                Long-form notes on what was built and what broke. Written in Markdown,
-                committed to the repository, served as plain files &mdash; no database
-                between you and the text.
-            </p>
+            <h1>Notes <em>from the workshop</em></h1>
+            <p class="sub">Markdown, committed to the repository, served as plain files.</p>
         </div>
 
-        <section class="plate" style="border-bottom:0;padding-top:30px">
-            <div id="ledger" class="ledger" aria-live="polite" aria-busy="true">
+        <div style="padding:26px 0 60px">
+            <p class="col-head">Entries</p>
+            <div id="ledger" class="ledger" style="border-top:0" aria-live="polite" aria-busy="true">
                 <p class="empty">Loading entries&hellip;</p>
             </div>
-            <div class="cat-note" style="margin-top:16px">
+            <p class="note-line">
                 <span id="count">&nbsp;</span>
-                <a href="editor.html" style="border-bottom:1px solid var(--accent)">New entry</a>
-            </div>
-        </section>
+                <a href="editor.html" style="border-bottom:1px solid var(--vermilion)">New entry</a>
+            </p>
+        </div>
     </div>
 </main>
 
 <footer class="foot">
     <span>The Atomic Corporation &middot; atomiccorp.org</span>
     <div class="set">
-        <a href="#main">Back to top</a>
+        <a href="#top">Back to top</a>
         <a href="../index.html">Home</a>
         <span>&copy; 2026</span>
     </div>
@@ -90,7 +77,7 @@
     function render(list) {
         ledger.removeAttribute("aria-busy");
         if (!list || !list.length) {
-            ledger.innerHTML = '<p class="empty">No entries yet. The first one is unwritten.</p>';
+            ledger.innerHTML = '<p class="empty">No entries yet.</p>';
             count.textContent = "0 entries";
             return;
         }
@@ -100,7 +87,7 @@
             return '<a class="ledger-item" href="article.html?id=' + encodeURIComponent(a.id) + '">' +
                 '<span class="date">' + esc(shortDate(a.date)) + (tags ? "<br>" + esc(tags) : "") + "</span>" +
                 "<span>" +
-                '<span class="title"><span>' + esc(a.title) + "</span></span>" +
+                '<span class="title">' + esc(a.title) + "</span>" +
                 '<span class="sum">' + esc(a.summary || "") + "</span>" +
                 "</span>" +
                 '<span class="arrow" aria-hidden="true">&rarr;</span>' +
@@ -118,8 +105,7 @@
                 .then(render)
                 .catch(function () {
                     ledger.removeAttribute("aria-busy");
-                    ledger.innerHTML = '<p class="empty">Could not load the manifest. ' +
-                        '<a href="data/articles.json" style="border-bottom:1px solid var(--accent)">Open it directly</a>.</p>';
+                    ledger.innerHTML = '<p class="empty">Could not load the manifest.</p>';
                     count.textContent = "";
                 });
         });
