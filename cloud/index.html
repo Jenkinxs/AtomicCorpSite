@@ -2,361 +2,120 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cloud Dashboard · Λ</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --theme-hue: 120;
-  --theme-bg-saturation: 40%;
-  --theme-bg-lightness: 3%;
-  --theme-panel-saturation: 22%;
-  --theme-panel-lightness: 10%;
-  --theme-accent-saturation: 18%;
-  --theme-accent-lightness: 78%;
-  --theme-text-saturation: 0%;
-  --theme-text-lightness: 83%;
-
-  --bg: hsl(var(--theme-hue) var(--theme-bg-saturation) var(--theme-bg-lightness));
-  --panel: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.70);
-  --panel-strong: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 1%) / 0.95);
-  --panel-soft: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 2%) / 0.45);
-  --surface-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 10%) / 0.06);
-  --surface-soft: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 12%) / 0.04);
-  --border: hsla(var(--theme-hue) var(--theme-accent-saturation) var(--theme-accent-lightness) / 0.13);
-  --border-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 8%) / 0.28);
-  --cream: hsl(var(--theme-hue) var(--theme-text-saturation) var(--theme-text-lightness));
-  --cream-dim: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 4%) calc(var(--theme-text-lightness) - 1%) / 0.55);
-  --cream-muted: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 8%) calc(var(--theme-text-lightness) - 3%) / 0.32);
-  --white: hsl(var(--theme-hue) calc(var(--theme-text-saturation) - 21%) calc(var(--theme-text-lightness) + 13%));
-  --mono: 'IBM Plex Mono', monospace;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --accent: #b88a5f;
-  --accent-dim: rgba(184, 138, 95, 0.5);
-}
-
-html, body { height: 100%; }
-
-body {
-  font-family: var(--serif);
-  color: var(--cream);
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  background-color: var(--bg);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/7Plague.jpg');
-  background-position: bottom;
-  opacity: 0.12;
-  z-index: -1;
-}
-
-/* ── NAV ── */
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  height: 60px;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.nav-bar a {
-  text-decoration: none;
-  color: var(--cream-dim);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  transition: color 0.15s;
-}
-
-.nav-bar a:hover {
-  color: var(--cream);
-}
-
-.nav-title {
-  font-family: "Bodoni Moda", serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  color: var(--cream);
-  text-transform: uppercase;
-}
-
-/* ── HERO ── */
-.hero {
-  text-align: center;
-  padding: 80px 24px 40px;
-  border-bottom: 1px solid var(--border);
-}
-
-.hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(36px, 5vw, 64px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  text-transform: uppercase;
-  color: var(--cream);
-  margin-bottom: 12px;
-  text-shadow: 2px 0px 1px rgb(104, 0, 0);
-}
-
-.hero p {
-  font-family: var(--serif);
-  font-size: 16px;
-  font-weight: 300;
-  font-style: italic;
-  color: var(--white);
-  max-width: 480px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
-/* ── DASHBOARD GRID ── */
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 0;
-  max-width: 1200px;
-  margin: 0 auto;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-}
-
-.service-card {
-  padding: 32px 28px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  transition: background 0.18s;
-  position: relative;
-}
-
-.service-card:hover {
-  background: var(--surface-hover);
-}
-
-.service-card:hover .service-arrow {
-  opacity: 1;
-  transform: translateX(4px);
-}
-
-.service-port {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.15em;
-  color: var(--accent);
-  margin-bottom: 14px;
-  text-transform: uppercase;
-}
-
-.service-name {
-  font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--white);
-  margin-bottom: 8px;
-  line-height: 1.25;
-}
-
-.service-desc {
-  font-family: var(--serif);
-  font-size: 14.5px;
-  font-weight: 300;
-  font-style: italic;
-  color: var(--cream-dim);
-  line-height: 1.55;
-  flex: 1;
-}
-
-.service-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-}
-
-.service-url {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--cream-muted);
-  letter-spacing: 0.05em;
-  word-break: break-all;
-}
-
-.service-arrow {
-  font-family: var(--mono);
-  font-size: 14px;
-  color: var(--accent);
-  opacity: 0;
-  transform: translateX(0);
-  transition: all 0.2s ease;
-}
-
-/* ── STATUS BAR ── */
-.status-bar {
-  border-bottom: 1px solid var(--border);
-  padding: 14px 28px;
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-soft);
-}
-
-.status-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #6b8f5e;
-  margin-right: 6px;
-}
-
-.status-text {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.12em;
-  color: var(--cream-muted);
-  text-transform: uppercase;
-}
-
-/* ── FOOTER ── */
-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px 36px;
-  border-top: 1px solid var(--border);
-}
-
-.footer-left {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--cream-muted);
-  letter-spacing: 0.1em;
-}
-
-.footer-right a {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--cream-muted);
-  text-decoration: none;
-  letter-spacing: 0.1em;
-  transition: color 0.15s;
-}
-
-.footer-right a:hover {
-  color: var(--cream-dim);
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 600px) {
-  .hero { padding: 50px 20px 30px; }
-  .dashboard { grid-template-columns: 1fr; }
-  .status-bar { flex-direction: column; gap: 8px; padding: 12px 20px; }
-  footer { flex-direction: column; gap: 12px; text-align: center; }
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud — The Atomic Corporation</title>
+<meta name="description" content="Internal services on the atomic network: Athena, the localised cloud system, and three synchronisation nodes.">
+<meta name="page-type" content="software">
+<meta name="site-kind" content="software">
+<meta name="theme-color" content="#efe3c8">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../images/favicon.ico" sizes="any">
+<link rel="preload" href="../assets/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<div class="nav-bar">
-  <a href="/">&larr; AtomicCorp</a>
-  <span class="nav-title"></span>
-  <span></span>
-</div>
-
-<section class="hero">
-  <h1>Services</h1>
-  <p>Internal services reachable from within the atomic network.</p>
-</section>
-
-
-
-<div class="dashboard">
-
-  <a class="service-card" href="http://cloud.atomiccorp.org:8787" target="_blank">
-    <span class="service-port"></span>
-    <h2 class="service-name">Athena</h2>
-    <p class="service-desc">Local access to the Athena Instance</p>
-    <div class="service-footer">
-      <span class="service-url">cloud.atomiccorp.org:8787</span>
-      <span class="service-arrow">&rarr;</span>
+<header class="bar">
+    <div class="bar-mark">
+        <span class="bar-glyph">&#9632;</span>
+        <b>The Atomic Corporation</b>
     </div>
-  </a>
+    <nav class="bar-nav" aria-label="Primary">
+        <a href="../index.html#catalogue">Catalogue</a>
+        <a href="../index.html#workshop">Workshop</a>
+        <a href="../articles/">Writing</a>
+        <a href="." aria-current="page">Cloud</a>
+        <a href="../contact/">Contact</a>
+    </nav>
+    <div class="bar-clock"><span data-clock>----</span></div>
+    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="main">Index</button>
+</header>
 
-  <a class="service-card" href="http://cloud.atomiccorp.org:" target="_blank">
-    <span class="service-port"></span>
-    <h2 class="service-name">Cloud</h2>
-    <p class="service-desc">Localized Cloud System</p>
-    <div class="service-footer">
-      <span class="service-url">cloud.atomiccorp.org:4012</span>
-      <span class="service-arrow">&rarr;</span>
+<main id="main">
+    <div class="shell">
+        <div class="page-head">
+            <div class="plate-head">
+                <span class="no">Plate 06</span>
+                <span class="rule" aria-hidden="true"></span>
+                <span class="folio">Cloud &middot; internal</span>
+            </div>
+            <h1>Cloud<br>dashboard.</h1>
+            <p class="lede">
+                Services reachable from inside the atomic network. Not a product,
+                not a portal: a switchboard for machines that already trust each other.
+            </p>
+        </div>
+
+        <section class="plate" style="border-bottom:0">
+            <p class="micro" style="margin-bottom:14px">Five services &middot; cloud.atomiccorp.org</p>
+
+            <div class="svc">
+                <a href="http://cloud.atomiccorp.org:8787">
+                    <span class="n">01</span>
+                    <span>
+                        <span class="t">Athena</span>
+                        <span class="d">Local access to the Athena instance</span>
+                    </span>
+                    <span class="p">:8787</span>
+                </a>
+                <a href="http://cloud.atomiccorp.org:4012">
+                    <span class="n">02</span>
+                    <span>
+                        <span class="t">Cloud</span>
+                        <span class="d">Localised cloud system</span>
+                    </span>
+                    <span class="p">:4012</span>
+                </a>
+                <a href="http://cloud.atomiccorp.org:8384">
+                    <span class="n">03</span>
+                    <span>
+                        <span class="t">Atomic5</span>
+                        <span class="d">Synchronisation, node one</span>
+                    </span>
+                    <span class="p">:8384</span>
+                </a>
+                <a href="http://cloud.atomiccorp.org:8385">
+                    <span class="n">04</span>
+                    <span>
+                        <span class="t">Prime</span>
+                        <span class="d">Synchronisation, node two</span>
+                    </span>
+                    <span class="p">:8385</span>
+                </a>
+                <a href="http://cloud.atomiccorp.org:8387">
+                    <span class="n">05</span>
+                    <span>
+                        <span class="t">Remote</span>
+                        <span class="d">Synchronisation, node three</span>
+                    </span>
+                    <span class="p">:8387</span>
+                </a>
+            </div>
+
+            <div class="cat-note" style="margin-top:16px">
+                <span>Plain HTTP &middot; inside the mesh only</span>
+                <span>No public ingress</span>
+            </div>
+
+            <p class="prose" style="margin-top:34px">
+                These links resolve only on the atomic network. If a service does not
+                answer, the node is down or you are not on the mesh &mdash; the dashboard
+                cannot tell you which, so check the network first.
+            </p>
+        </section>
     </div>
-  </a>
+</main>
 
-  <a class="service-card" href="http://cloud.atomiccorp.org:8384" target="_blank">
-    <span class="service-port"></span>
-    <h2 class="service-name">Atomic5</h2>
-    <p class="service-desc">Synchronization I</p>
-    <div class="service-footer">
-      <span class="service-url">cloud.atomiccorp.org:8384</span>
-      <span class="service-arrow">&rarr;</span>
+<footer class="foot">
+    <span>The Atomic Corporation &middot; atomiccorp.org</span>
+    <div class="set">
+        <a href="#main">Back to top</a>
+        <a href="../index.html">Home</a>
+        <span>&copy; 2026</span>
     </div>
-  </a>
-
-  <a class="service-card" href="http://cloud.atomiccorp.org:8385" target="_blank">
-    <span class="service-port"></span>
-    <h2 class="service-name">Prime</h2>
-    <p class="service-desc">Synchronization II</p>
-    <div class="service-footer">
-      <span class="service-url">cloud.atomiccorp.org:8385</span>
-      <span class="service-arrow">&rarr;</span>
-    </div>
-  </a>
-
-  <a class="service-card" href="http://cloud.atomiccorp.org:8387" target="_blank">
-    <span class="service-port"></span>
-    <h2 class="service-name">Remote</h2>
-    <p class="service-desc">Synchronization III</p>
-    <div class="service-footer">
-      <span class="service-url">cloud.atomiccorp.org:8387</span>
-      <span class="service-arrow">&rarr;</span>
-    </div>
-  </a>
-
-</div>
-
-<footer>
-  <span class="footer-left">The Atomic Corporation</span>
-  <div class="footer-right">
-    <a href="/">atomiccorp.org</a>
-  </div>
 </footer>
 
+<script src="../assets/site.js"></script>
 </body>
 </html>

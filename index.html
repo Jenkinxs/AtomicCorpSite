@@ -1,947 +1,482 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Λ</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="particle-network.css">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --theme-hue: 120;
-  --theme-bg-saturation: 40%;
-  --theme-bg-lightness: 3%;
-  --theme-panel-saturation: 22%;
-  --theme-panel-lightness: 10%;
-  --theme-accent-saturation: 18%;
-  --theme-accent-lightness: 78%;
-  --theme-text-saturation: 0%;
-  --theme-text-lightness: 83%;
-  filter: invert(0);
-  animation: invert-pulse 0.5s ease-out 1;
-  
-  --bg: hsl(var(--theme-hue) var(--theme-bg-saturation) var(--theme-bg-lightness));
-  --panel: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.70);
-  --panel-strong: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 1%) / 0.95);
-  --panel-soft: hsla(var(--theme-hue) var(--theme-panel-saturation) calc(var(--theme-panel-lightness) + 2%) / 0.45);
-  --surface-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 10%) / 0.06);
-  --surface-soft: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 12%) / 0.04);
-  --grid-line: hsla(var(--theme-hue) var(--theme-bg-saturation) calc(var(--theme-accent-lightness) - 2%) / 0.035);
-  --vignette: hsla(var(--theme-hue) var(--theme-bg-saturation) calc(var(--theme-bg-lightness) + 3%) / 0.70);
-  --border: hsla(var(--theme-hue) var(--theme-accent-saturation) var(--theme-accent-lightness) / 0.13);
-  --border-hover: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 8%) / 0.28);
-  --cream: hsl(var(--theme-hue) var(--theme-text-saturation) var(--theme-text-lightness));
-  --cream-dim: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 4%) calc(var(--theme-text-lightness) - 1%) / 0.55);
-  --cream-muted: hsla(var(--theme-hue) calc(var(--theme-text-saturation) - 8%) calc(var(--theme-text-lightness) - 3%) / 0.32);
-  --white: hsl(var(--theme-hue) calc(var(--theme-text-saturation) - 21%) calc(var(--theme-text-lightness) + 13%));
-  --input-border: hsla(var(--theme-hue) var(--theme-accent-saturation) calc(var(--theme-accent-lightness) + 6%) / 0.14);
-  --input-bg: hsla(var(--theme-hue) var(--theme-bg-saturation) calc(var(--theme-bg-lightness) + 3%) / 0.65);
-  --mono: 'IBM Plex Mono', monospace;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-
-
-  --pn-bg:          #2a2a2a00;   /* background fill                  */
-  --pn-dot:         rgba(255, 255, 255, 0.408);  /* particle color  */
-  --pn-line:        rgba(230, 230, 230, 0.219);  /* connection line  */
-  --pn-line-near:   rgba(255, 255, 255, 0.147);  /* close-range line */
-  --pn-glow:        rgba(255, 255, 255, 0);  /* radial glow tint */
-
-    /* -- Canvas positioning -- */
-  #particle-network {
-    position: fixed;   /* change to absolute if inside a relative container */
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    background: var(--pn-bg);
-    display: block;
-  }
-  
-  /* -- Everything else sits above the canvas -- */
-  body > *:not(#particle-network) {
-    position: relative;
-    z-index: 1;
-  }
-
-
-
-
-}
-
-html, body { height: 100%; }
-
-body {
-  font-family: var(--serif);
-  color: var(--cream);
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  background-color: var(--bg);
-  position: relative;
-}
-
-
-
-body::before {
-  content: "";
-  position: fixed; /* or absolute */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* Set your background image here */
-  background-image: url('/images/7Plague.jpg');
-  
-  background-position: bottom;
-  /* Adjust transparency (0.0 to 1.0) */
-  opacity: 0.17; 
-  /* Ensure it stays behind content */
-  z-index: -1; 
-}
-
-nav {
-  display: grid;
-  grid-template-columns: 300px 1fr 1fr 1fr 1fr 160px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 100;
-  background: var(--panel);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  transition: grid-template-columns 0.3s ease;
-  align-items: stretch;
-}
-
-/* Extends nav background upward to cover overscroll rubber-band gap */
-nav::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 100%;
-  height: 200vh;
-  background: var(--panel);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  pointer-events: none;
-  z-index: -1;
-}
-
-.hamburger-btn {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 40px;
-  min-width: 40px;
-  height: 76px;
-  background: transparent;
-  border: none;
-  border-left: 1px solid var(--border);
-  cursor: pointer;
-  padding: 8px;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.hamburger-btn span {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--cream-dim);
-  transition: all 0.3s ease;
-}
-
-.hamburger-btn.active span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-
-.hamburger-btn.active span:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.hamburger-btn.active span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
-
-.mobile-menu {
-  display: none;
-  width: 100%;
-  background: var(--panel-strong);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border);
-  flex-direction: column;
-  z-index: 99;
-  animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.mobile-menu.active {
-  display: flex;
-}
-
-.mobile-menu a {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  color: var(--cream-dim);
-  transition: background 0.15s, color 0.15s;
-  font-family: var(--serif);
-  font-size: 15px;
-  text-transform: uppercase;
-}
-
-.mobile-menu a:hover {
-  background: var(--surface-hover);
-  color: var(--cream);
-}
-
-.nav-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.15s;
-  min-height: 6px;
-  text-decoration: none;
-  position: relative;
-}
-.nav-cell:last-child { border-right: none; }
-.nav-cell:hover { background: var(--surface-hover); }
-.nav-logo-cell { justify-content: flex-start; padding: 16px 20px; cursor: default; }
-.nav-logo-cell:hover { background: transparent; }
-
-.nav-logo {
-  font-family: "Bodoni Moda", serif;
-  font-size: 21px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  line-height: 1.15;
-  color: var(--cream);
-  text-transform: uppercase;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.nav-logo img {
-  max-height: 44px;
-  width: auto;
-  display: block;
-  flex-shrink: 0;
-}
-
-.nav-link-text {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 15;
-  font-weight: 400;
-  letter-spacing: 0.0em;
-  color: var(--cream-dim);
-  text-transform: uppercase;
-  user-select: none;
-  transition: color 0.15s;
-}
-.nav-cell:hover .nav-link-text { color: var(--cream); }
-.nav-theme-cell { gap: 10px; }
-
-
-/* ── HERO ── */
-.hero-wrapper {
-  position: relative;
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
-  min-height: 680px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#globe-canvas {
-  position: absolute;
-  top: 0%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 130%;
-  height: 150%;
-  z-index: 0;
-}
-
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 72px 72px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 75% at 50% 50%, transparent 25%, var(--vignette) 65%, var(--bg) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.hero {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 110px 2rem 110px;
-  max-width: 760px;
-  margin: 0 auto;
-}
-
-.hero-eyebrow {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  color: var(--cream-muted);
-  text-transform: uppercase;
-  margin-bottom: 22px;
-}
-
-.hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(54px, 7.5vw, 92px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 0.98;
-  text-transform: uppercase;
-  color: var(--cream);
-  margin-bottom: 30px;
-  text-shadow: 2px 0px 1px rgb(104, 0, 0); 
-}
-
-.hero-sub {
-  font-family: var(--serif);
-  font-size: 18.5px;
-  font-weight: 300;
-  font-style: italic;
-  color: var(--white);
-  line-height: 1.7;
-  max-width: 460px;
-  text-shadow: 1px 1px 1px rgb(0, 0, 0); 
-}
-
-/* ── FEATURES ── */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid var(--border);
-  text-shadow: 1px 1px 1px rgb(0, 0, 0);
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  background: hsla(var(--theme-hue) var(--theme-panel-saturation) var(--theme-panel-lightness) / 0.15);
-  backdrop-filter: blur(0.0px);
-  -webkit-backdrop-filter: blur(0.0px);
-  
-}
-
-.feature-card {
-  padding: 38px 32px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.18s;
-  text-shadow: 1px 1px 1px rgb(0, 0, 0); 
-  cursor: pointer;
-  
-  
-}
-.feature-card:nth-child(3n) { border-right: none; }
-.feature-card:nth-last-child(-n+3) { border-bottom: none; }
-.feature-card:hover { background: var(--surface-hover); }
-
-.feature-num {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.0em;
-  color: var(--cream-muted);
-  margin-bottom: 18px;
-  text-shadow: 1px 1px 1px rgb(0, 0, 0); 
-}
-
-.feature-card h3 {
-  font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--white);
-  margin-bottom: 10px;
-  line-height: 1.25;
-  text-shadow: 1px 1px 1px rgb(0, 0, 0); 
-}
-
-.feature-card p {
-  font-family: var(--serif);
-  font-size: 16px;
-  font-weight: 300;
-  font-style: italic;
-  color: var(--white);
-  line-height: 1.65;
-  text-shadow: 1px 1px 1px rgb(0, 0, 0); 
-}
-
-.more-row {
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: center;
-  padding: 28px;
-}
-
-.more-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--cream-dim);
-  background: none;
-  border: 1px solid var(--border);
-  padding: 10px 30px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.18s;
-}
-.more-btn:hover { border-color: var(--border-hover); color: var(--cream); background: var(--surface-soft); }
-
-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px 36px;
-  border-top: 1px solid var(--border);
-}
-.footer-left { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); letter-spacing: 0.1em; }
-.footer-right { display: flex; gap: 28px; }
-.footer-right a { font-family: var(--mono); font-size: 10.5px; color: var(--cream-muted); text-decoration: none; letter-spacing: 0.1em; transition: color 0.15s; }
-.footer-right a:hover { color: var(--cream-dim); }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  nav {
-    grid-template-columns: 1fr 40px;
-  }
-  .nav-cell:not(.nav-logo-cell) {
-    display: none;
-  }
-  .hamburger-btn {
-    display: flex;
-  }
-  .nav-logo {
-    font-size: 16px;
-    transition: font-size 0.3s ease;
-  }
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  .feature-card:nth-child(3n) { border-right: none; }
-  .feature-card:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
-  .feature-card:last-child { border-bottom: none; }
-}
-
-@keyframes invert-pulse {
-  0% {
-    filter: invert(75);
-  }
-  50% {
-    filter: invert(75%);
-  }
-  100% {
-    filter: invert(0);
-  }
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Atomic Corporation — Systems Catalogue</title>
+<meta name="description" content="The Atomic Corporation builds and operates small, specific software: a student concern hotline, a NOAA alert receiver, an audio transcriber, a YARA classifier, a music bot, and an agent.">
+<meta name="page-type" content="software">
+<meta name="site-kind" content="software">
+<meta name="theme-color" content="#efe3c8">
+<meta property="og:title" content="The Atomic Corporation — Systems Catalogue">
+<meta property="og:description" content="Six systems, built and kept running. Spec'd, documented, and operated in-house.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://atomiccorp.org/">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="preload" href="assets/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
 </head>
-
 <body>
+<a class="skip" href="#main">Skip to the catalogue</a>
 
-  <canvas id="particle-network"></canvas>
+<header class="bar">
+    <div class="bar-mark">
+        <span class="bar-glyph">&#9632;</span>
+        <b>The Atomic Corporation</b>
+    </div>
+    <nav class="bar-nav" aria-label="Primary">
+        <a href="#catalogue">Catalogue</a>
+        <a href="#workshop">Workshop</a>
+        <a href="articles/">Writing</a>
+        <a href="cloud/">Cloud</a>
+        <a href="contact/">Contact</a>
+    </nav>
+    <div class="bar-clock"><span data-clock>----</span></div>
+    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="main">Index</button>
+</header>
 
-<div id="nav-wrapper" style="position:sticky;top:0;z-index:100;">
-<nav>
-  <div class="nav-cell nav-logo-cell">
-    <a class="nav-logo" href="#"><img src="../images/AtomicCorpLogo2.png" alt="The Atomic Corporation Logo">&nbsp;THE ATOMIC<br>&nbsp;CORPORATION</a>
-  </div>
-  <a class="nav-cell" href="/contact/"><span class="nav-link-text" data-orig="Contact">Contact</span></a>
-  <a class="nav-cell" href="https://www.linkedin.com/in/tjenkins1/"><span class="nav-link-text" data-orig="LinkedIn">LinkedIn</span></a>
-  <a class="nav-cell" href="https://github.com/Jenkinxs/"><span class="nav-link-text" data-orig="GitHub">GitHub</span></a>
-  <a class="nav-cell" href="https://pricey-fish95.bandcamp.com/"><span class="nav-link-text" data-orig="Bandcamp">Bandcamp</span></a>
-  <button class="hamburger-btn" id="hamburger-menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-</nav>
+<main id="main">
 
-<div class="mobile-menu" id="mobile-menu">
-  <a href="https://drive.google.com/file/d/1hk0gFpIgDU0rKCejF2Y3W3u4aQJx4tnS/view">Resume</a>
-  <a href="https://www.linkedin.com/in/tjenkins1/">LinkedIn</a>
-  <a href="https://github.com/Jenkinxs/">GitHub</a>
-  <a href="https://pricey-fish95.bandcamp.com/">Bandcamp</a>
-</div>
-</div>
+<!-- ══ MASTHEAD ══════════════════════════════════════════ -->
+<section class="shell" aria-labelledby="mast-title">
+    <div class="masthead">
+        <div class="mast-type">
+            <p class="mast-eyebrow" data-enter data-d="0"><span class="dot"></span> Plate 00 &middot; Masthead</p>
+            <h1 class="mast" id="mast-title" data-enter data-d="1">
+                <span class="l1">Atomic</span>
+                <span class="l2">Corporation</span>
+            </h1>
+            <hr class="mast-rule" data-enter data-d="1">
+            <p class="mast-line" data-enter data-d="2">
+                A software workshop. Six systems built, deployed, and kept running &mdash;
+                a student concern hotline, a weather alert receiver, an audio transcriber,
+                a YARA classifier, a music bot, and an agent. <em>For everything you do.</em>
+            </p>
+            <div class="actions" data-enter data-d="3">
+                <a class="btn btn-solid" href="#catalogue"><span class="k">01</span> See the systems</a>
+                <a class="btn btn-quiet" href="#colophon"><span class="k">02</span> Read the colophon</a>
+            </div>
 
-<div class="hero-wrapper">
-  <canvas id="globe-canvas"></canvas>
-  
-  <div class="hero-vignette"></div>
-  <section class="hero">
-    
-    <h1>"For Everything You Do."</h1>
-    <p class="hero-sub">
-      The Atomic Corporation is an early-stage software and service delivery company that strives to provide solutions to computation, financial, and other problems, around the world.
-    </p>
-  </section>
-</div>
+            <dl class="specstrip compact" data-enter data-d="3">
+                <div><dt>Systems</dt><dd>06<small>one runtime</small></dd></div>
+                <div><dt>Public source</dt><dd>05<small>on GitHub</small></dd></div>
+                <div><dt>Under GPL-3.0</dt><dd>03<small>copyleft</small></dd></div>
+                <div><dt>In service</dt><dd>01<small>Drew SGA</small></dd></div>
+            </dl>
+        </div>
 
-<div class="features-grid">
-  <div class="feature-card">
-    <p class="feature-num">I</p>
-    <h3>AtomicTelephone</h3>
-    <p>Telephone hotline software used by the Student Government of Drew University to receive student concerns.<br><br>Click here to view it's Privacy Policy.</p>
-  </div>
-  <div class="feature-card">
-    <p class="feature-num">II</p>
-    <h3>AM</h3>
-    <p>A feature-rich Discord music bot that is easily hosted and installed on any platform.</p>
-  </div>
-  <div class="feature-card">
-    <p class="feature-num">III</p>
-    <h3>Mimeograph</h3>
-    <p>Audio transcriber utilizing OpenAI's Whisper Speech Recognizer to transcribe YouTube & raw audio files, with LaTeX support.</p>
-  </div>
-  <div class="feature-card">
-    <p class="feature-num">IV</p>
-    <h3>AtomicNWS</h3>
-    <p>Light-weight & highly configurable weather alert receiver.</p>
-  </div>
-  <div class="feature-card">
-    <p class="feature-num">V</p>
-    <h3>SENTINEL</h3>
-    <p>Natural language to YARA ruleset pipeline leveraging multi-model interaction.</p>
-  </div>
-  <div class="feature-card">
-    <p class="feature-num">VI</p>
-    <h3>Athena</h3>
-    <p>Always-on AI assistant that acts upon it's listened surroundings.</p>
-  </div>
-</div>
+        <div class="mast-figure" data-enter data-d="2">
+            <figure class="figplate">
+                <div class="figplate-head">
+                    <span class="t">Fig. 00</span>
+                    <span>Systems &middot; parts tray</span>
+                </div>
+                <div class="figplate-stage">
+                    <svg class="tray" viewBox="0 0 520 470" role="img" aria-labelledby="tray-t tray-d">
+                        <title id="tray-t">The six systems as a parts tray</title>
+                        <desc id="tray-d">Six isometric slabs, one per system: Atomic Telephone, AM, Mimeograph, Atomic NWS, Sentinel, and Athena. Atomic Telephone is marked in service; the other five are public.</desc>
+                        <defs>
+                            <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse">
+                                <rect width="4" height="4" fill="#bdb88a"/>
+                                <rect width="4" height="1" fill="#8f8c5c"/>
+                            </pattern>
+                        </defs>
 
-<div class="more-row">
-  <a class="more-btn" href="#">Back To Top</a>
-</div>
+                        <text class="d" x="12" y="16">Six systems &middot; one runtime</text>
+                        <text class="d" x="494" y="16" text-anchor="end">Scale 1:1</text>
+                        <path class="guide" d="M12 28 H494" stroke="#c9bb98" stroke-dasharray="1 6"/>
 
-<footer>
-  <span class="footer-left">The Atomic Corporation</span>
-  <div class="footer-right">
-    
-  </div>
+                        <g transform="translate(12,104)">
+                            <polygon class="slab-top" points="0,0 44,-18 224,-18 180,0"/>
+                            <rect class="slab-front" x="0" y="0" width="180" height="32"/>
+                            <polygon class="slab-side" points="180,0 224,-18 224,14 180,32"/>
+                            <text class="n" x="11" y="21">01</text>
+                            <text x="35" y="21">ATOMIC TELEPHONE</text>
+                            <rect class="key-live" x="152" y="11" width="9" height="9"/>
+                        </g>
+                        <g transform="translate(270,104)">
+                            <polygon class="slab-top" points="0,0 44,-18 224,-18 180,0"/>
+                            <rect class="slab-front" x="0" y="0" width="180" height="32"/>
+                            <polygon class="slab-side" points="180,0 224,-18 224,14 180,32"/>
+                            <text class="n" x="11" y="21">02</text>
+                            <text x="35" y="21">AM</text>
+                            <rect class="key" x="152" y="11" width="9" height="9"/>
+                        </g>
+
+                        <g transform="translate(12,232)">
+                            <polygon class="slab-top" points="0,0 44,-18 224,-18 180,0"/>
+                            <rect class="slab-front" x="0" y="0" width="180" height="32"/>
+                            <polygon class="slab-side" points="180,0 224,-18 224,14 180,32"/>
+                            <text class="n" x="11" y="21">03</text>
+                            <text x="35" y="21">MIMEOGRAPH</text>
+                            <rect class="key" x="152" y="11" width="9" height="9"/>
+                        </g>
+                        <g transform="translate(270,232)">
+                            <polygon class="slab-top" points="0,0 44,-18 224,-18 180,0"/>
+                            <rect class="slab-front" x="0" y="0" width="180" height="32"/>
+                            <polygon class="slab-side" points="180,0 224,-18 224,14 180,32"/>
+                            <text class="n" x="11" y="21">04</text>
+                            <text x="35" y="21">ATOMIC NWS</text>
+                            <rect class="key" x="152" y="11" width="9" height="9"/>
+                        </g>
+
+                        <g transform="translate(12,360)">
+                            <polygon class="slab-top" points="0,0 44,-18 224,-18 180,0"/>
+                            <rect class="slab-front" x="0" y="0" width="180" height="32"/>
+                            <polygon class="slab-side" points="180,0 224,-18 224,14 180,32"/>
+                            <text class="n" x="11" y="21">05</text>
+                            <text x="35" y="21">SENTINEL</text>
+                            <rect class="key" x="152" y="11" width="9" height="9"/>
+                        </g>
+                        <g transform="translate(270,360)">
+                            <polygon class="slab-top" points="0,0 44,-18 224,-18 180,0"/>
+                            <rect class="slab-front" x="0" y="0" width="180" height="32"/>
+                            <polygon class="slab-side" points="180,0 224,-18 224,14 180,32"/>
+                            <text class="n" x="11" y="21">06</text>
+                            <text x="35" y="21">ATHENA</text>
+                            <rect class="key" x="152" y="11" width="9" height="9"/>
+                        </g>
+
+                        <path class="guide" d="M12 414 H494" stroke="#c9bb98" stroke-dasharray="1 6"/>
+                        <rect class="key-live" x="12" y="429" width="9" height="9"/>
+                        <text class="d" x="26" y="437">In service</text>
+                        <rect class="key" x="112" y="429" width="9" height="9"/>
+                        <text class="d" x="126" y="437">Public</text>
+                        <text class="d" x="494" y="437" text-anchor="end">Rev. 06</text>
+                    </svg>
+                </div>
+                <div class="figplate-foot">
+                    <span>Built, deployed, maintained</span>
+                    <span><b>06</b> / 06</span>
+                </div>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<!-- ══ PLATE 01 · CATALOGUE ══════════════════════════════ -->
+<section class="plate plate-corners" id="catalogue" aria-labelledby="cat-title">
+    <div class="shell">
+        <div class="plate-head">
+            <span class="no">Plate 01</span>
+            <span class="rule" aria-hidden="true"></span>
+            <span class="folio">Catalogue &middot; 6 entries</span>
+        </div>
+        <div class="plate-intro">
+            <div>
+                <h2 id="cat-title">Six systems,<br>six jobs.</h2>
+                <p class="lede">
+                    Nothing here is a platform. Each entry does one job, reports what it did,
+                    and can be replaced without touching the rest.
+                </p>
+            </div>
+            <aside class="margin-note">
+                <div class="mn-head">Note</div>
+                <dl>
+                    <div><dt>Written in</dt><dd>Python &times;5</dd></div>
+                    <div><dt>Copyleft</dt><dd>GPL-3.0 &times;3</dd></div>
+                    <div><dt>In production</dt><dd>1 site</dd></div>
+                    <div><dt>Oldest line</dt><dd>2025-03-11</dd></div>
+                </dl>
+            </aside>
+        </div>
+
+        <table class="cat">
+            <caption class="micro" style="text-align:left;padding-bottom:12px">
+                Six entries. Dates are first commit. Codes match Fig. 01.
+            </caption>
+            <colgroup>
+                <col style="width:3.2em">
+                <col style="width:20%">
+                <col style="width:38%">
+                <col style="width:8%">
+                <col style="width:8%">
+                <col style="width:10%">
+                <col style="width:11%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Job</th>
+                    <th scope="col">Lang</th>
+                    <th scope="col">Licence</th>
+                    <th scope="col">First commit</th>
+                    <th scope="col">State</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="c-no">01</td>
+                    <td class="c-name"><a href="atomictelephone/">Atomic Telephone</a><span class="code">AT-2025</span></td>
+                    <td class="c-job">Student concern hotline for Drew SGA &mdash; voice and SMS in, transcripts filed</td>
+                    <td class="c-meta">Python</td>
+                    <td class="c-meta">&mdash;</td>
+                    <td class="c-meta">2025-10-31</td>
+                    <td class="c-stat"><span class="pill live">Public</span></td>
+                </tr>
+                <tr>
+                    <td class="c-no">02</td>
+                    <td class="c-name"><a href="https://github.com/Jenkinxs/AM">AM</a><span class="code">AM-2025</span></td>
+                    <td class="c-job">Discord music bot, self-hosted, plays from YouTube</td>
+                    <td class="c-meta">Python</td>
+                    <td class="c-meta">GPL-3.0</td>
+                    <td class="c-meta">2025-03-11</td>
+                    <td class="c-stat"><span class="pill">Public</span></td>
+                </tr>
+                <tr>
+                    <td class="c-no">03</td>
+                    <td class="c-name"><a href="https://github.com/Jenkinxs/Mimeograph">Mimeograph</a><span class="code">MG-2025</span></td>
+                    <td class="c-job">Audio and YouTube to text, with LaTeX output</td>
+                    <td class="c-meta">Python</td>
+                    <td class="c-meta">GPL-3.0</td>
+                    <td class="c-meta">2025-05-04</td>
+                    <td class="c-stat"><span class="pill">Public</span></td>
+                </tr>
+                <tr>
+                    <td class="c-no">04</td>
+                    <td class="c-name"><a href="https://github.com/Jenkinxs/AtomicNWS">Atomic NWS</a><span class="code">NWS-2025</span></td>
+                    <td class="c-job">NOAA and National Weather Service alert receiver</td>
+                    <td class="c-meta">Python</td>
+                    <td class="c-meta">GPL-3.0</td>
+                    <td class="c-meta">2025-05-20</td>
+                    <td class="c-stat"><span class="pill">Public</span></td>
+                </tr>
+                <tr>
+                    <td class="c-no">05</td>
+                    <td class="c-name"><a href="https://github.com/Jenkinxs/Sentinel">Sentinel</a><span class="code">SN-2026</span></td>
+                    <td class="c-job">Natural language to YARA rules, classified by local models</td>
+                    <td class="c-meta">Python</td>
+                    <td class="c-meta">&mdash;</td>
+                    <td class="c-meta">2026-04-19</td>
+                    <td class="c-stat"><span class="pill">Source</span></td>
+                </tr>
+                <tr>
+                    <td class="c-no">06</td>
+                    <td class="c-name">Athena<span class="code">ATH-2026</span></td>
+                    <td class="c-job">Always-on agent that acts on what it hears</td>
+                    <td class="c-meta">&mdash;</td>
+                    <td class="c-meta">&mdash;</td>
+                    <td class="c-meta">2026-09-20</td>
+                    <td class="c-stat"><span class="pill">Private</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="cat-note">
+            <span>Public: repository and licence &middot; Source: repository only &middot; Private: not distributed</span>
+            <span>github.com/Jenkinxs</span>
+        </div>
+    </div>
+</section>
+
+<!-- ══ PLATE 02 · WORKSHOP ═══════════════════════════════ -->
+<section class="plate" id="workshop" aria-labelledby="ws-title">
+    <div class="shell">
+        <div class="plate-head">
+            <span class="no">Plate 02</span>
+            <span class="rule" aria-hidden="true"></span>
+            <span class="folio">Workshop &middot; material flow</span>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:26px">
+            <div>
+                <h2 id="ws-title">What goes in,<br>what comes out.</h2>
+                <p class="lede">
+                    Every system is a short line: a material arrives, one machine changes it,
+                    a product leaves. The machines share a runtime and nothing else, so any
+                    one of them can be rebuilt while the others keep running.
+                </p>
+            </div>
+
+            <figure class="diagram">
+                <div class="diagram-head">
+                    <span class="t">Fig. 01</span>
+                    <span>Material flow &middot; six lines</span>
+                </div>
+                <svg viewBox="0 0 1160 486" role="img" aria-labelledby="diag-title diag-desc" preserveAspectRatio="xMidYMid meet">
+                    <title id="diag-title">Material flow through the six systems</title>
+                    <desc id="diag-desc">Six parallel lines. Atomic Telephone takes calls and text messages and produces a concern log. AM takes a YouTube link and produces Discord audio. Mimeograph takes audio and produces text and LaTeX. Atomic NWS takes a NOAA feed and produces alerts. Sentinel takes prose and produces YARA rules. Athena takes ambient audio and produces actions.</desc>
+
+                    <text class="lbl" x="200" y="20" text-anchor="end">Input</text>
+                    <text class="lbl" x="330" y="20">Machine</text>
+                    <text class="lbl" x="830" y="20">Output</text>
+                    <text class="lbl" x="1142" y="20" text-anchor="end">Release</text>
+
+                    <g class="guides">
+                        <path class="guide" d="M208 32 V462"/>
+                        <path class="guide" d="M330 32 V462"/>
+                        <path class="guide" d="M716 32 V462"/>
+                        <path class="guide" d="M830 32 V462"/>
+                        <path class="guide" d="M1060 32 V462"/>
+                    </g>
+
+                    <g class="lines">
+                        <path class="wire" d="M208 62 H330"/><path class="wire" d="M716 62 H822"/>
+                        <path class="wire" d="M208 136 H330"/><path class="wire" d="M716 136 H822"/>
+                        <path class="wire" d="M208 210 H330"/><path class="wire" d="M716 210 H822"/>
+                        <path class="wire" d="M208 284 H330"/><path class="wire" d="M716 284 H822"/>
+                        <path class="wire" d="M208 358 H330"/><path class="wire" d="M716 358 H822"/>
+                        <path class="wire" d="M208 432 H330"/><path class="wire" d="M716 432 H822"/>
+
+                        <path class="wire-live" d="M208 62 H330"/>
+                        <path class="wire-live" style="animation-delay:-0.6s" d="M208 136 H330"/>
+                        <path class="wire-live" style="animation-delay:-1.2s" d="M208 210 H330"/>
+                        <path class="wire-live" style="animation-delay:-1.8s" d="M208 284 H330"/>
+                        <path class="wire-live" style="animation-delay:-2.4s" d="M208 358 H330"/>
+                        <path class="wire-live" style="animation-delay:-3s" d="M208 432 H330"/>
+                    </g>
+
+                    <g>
+                        <rect class="box-fill" x="330" y="38" width="386" height="48"/>
+                        <text x="344" y="58">Atomic Telephone</text>
+                        <text class="lbl" x="344" y="73">voice &middot; sms &rarr; transcript</text>
+                        <text class="lbl" x="702" y="67" text-anchor="end">AT-2025</text>
+                    </g>
+                    <g>
+                        <rect class="box-fill" x="330" y="112" width="386" height="48"/>
+                        <text x="344" y="132">AM</text>
+                        <text class="lbl" x="344" y="147">youtube &rarr; discord audio</text>
+                        <text class="lbl" x="702" y="141" text-anchor="end">AM-2025</text>
+                    </g>
+                    <g>
+                        <rect class="box-fill" x="330" y="186" width="386" height="48"/>
+                        <text x="344" y="206">Mimeograph</text>
+                        <text class="lbl" x="344" y="221">audio &rarr; text &middot; latex</text>
+                        <text class="lbl" x="702" y="215" text-anchor="end">MG-2025</text>
+                    </g>
+                    <g>
+                        <rect class="box-fill" x="330" y="260" width="386" height="48"/>
+                        <text x="344" y="280">Atomic NWS</text>
+                        <text class="lbl" x="344" y="295">noaa feed &rarr; alert</text>
+                        <text class="lbl" x="702" y="289" text-anchor="end">NWS-2025</text>
+                    </g>
+                    <g>
+                        <rect class="box-fill" x="330" y="334" width="386" height="48"/>
+                        <text x="344" y="354">Sentinel</text>
+                        <text class="lbl" x="344" y="369">prose &rarr; yara rule</text>
+                        <text class="lbl" x="702" y="363" text-anchor="end">SN-2026</text>
+                    </g>
+                    <g>
+                        <rect class="box-fill" x="330" y="408" width="386" height="48"/>
+                        <text x="344" y="428">Athena</text>
+                        <text class="lbl" x="344" y="443">ambient audio &rarr; action</text>
+                        <text class="lbl" x="702" y="437" text-anchor="end">ATH-2026</text>
+                    </g>
+
+                    <g text-anchor="end">
+                        <text x="200" y="58">Call / SMS</text><text class="lbl" x="200" y="73">inbound</text>
+                        <text x="200" y="132">YouTube URL</text><text class="lbl" x="200" y="147">link</text>
+                        <text x="200" y="206">Audio file</text><text class="lbl" x="200" y="221">wav &middot; mp3</text>
+                        <text x="200" y="280">NOAA feed</text><text class="lbl" x="200" y="295">atom &middot; rss</text>
+                        <text x="200" y="354">Prose</text><text class="lbl" x="200" y="369">plain text</text>
+                        <text x="200" y="428">Ambient audio</text><text class="lbl" x="200" y="443">always on</text>
+                    </g>
+
+                    <g>
+                        <text x="834" y="58">Concern log</text><text class="lbl" x="834" y="73">for SGA review</text>
+                        <text x="834" y="132">Discord audio</text><text class="lbl" x="834" y="147">in channel</text>
+                        <text x="834" y="206">Text &middot; LaTeX</text><text class="lbl" x="834" y="221">transcript</text>
+                        <text x="834" y="280">Alerts</text><text class="lbl" x="834" y="295">push &middot; local</text>
+                        <text x="834" y="354">YARA rule</text><text class="lbl" x="834" y="369">.yar</text>
+                        <text x="834" y="428">Actions</text><text class="lbl" x="834" y="443">tool calls</text>
+                    </g>
+
+                    <g class="lbl">
+                        <text x="1150" y="59" text-anchor="end">PUBLIC</text>
+                        <text x="1150" y="133" text-anchor="end">PUBLIC</text>
+                        <text x="1150" y="207" text-anchor="end">PUBLIC</text>
+                        <text x="1150" y="281" text-anchor="end">PUBLIC</text>
+                        <text x="1150" y="355" text-anchor="end">SOURCE</text>
+                        <text x="1150" y="429" text-anchor="end">PRIVATE</text>
+                    </g>
+                </svg>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<!-- ══ PLATE 03 · WRITING ════════════════════════════════ -->
+<section class="plate" id="writing" aria-labelledby="wr-title">
+    <div class="shell">
+        <div class="plate-head">
+            <span class="no">Plate 03</span>
+            <span class="rule" aria-hidden="true"></span>
+            <span class="folio">Writing &middot; the forum</span>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:22px">
+            <div>
+                <h2 id="wr-title">Notes from<br>the workshop.</h2>
+                <p class="lede">
+                    Long-form notes on what was built and what broke. Written in Markdown,
+                    committed to the repository, served as plain files.
+                </p>
+            </div>
+            <div class="ledger" id="ledger">
+                <a class="ledger-item" href="articles/?id=welcome-to-the-forum">
+                    <span class="date">2026-06-06</span>
+                    <span>
+                        <span class="title"><span>Welcome to the Forum</span></span>
+                        <span class="sum">A brief introduction to the articles section &mdash; what it is, how it works, and how to contribute.</span>
+                    </span>
+                    <span class="arrow" aria-hidden="true">&rarr;</span>
+                </a>
+            </div>
+            <p class="micro">One entry &middot; the forum is new</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══ PLATE 04 · COLOPHON ═══════════════════════════════ -->
+<section class="plate plate-corners" id="colophon" aria-labelledby="col-title">
+    <div class="shell">
+        <div class="plate-head">
+            <span class="no">Plate 04</span>
+            <span class="rule" aria-hidden="true"></span>
+            <span class="folio">Colophon &middot; contact</span>
+        </div>
+        <div class="colophon">
+            <div>
+                <h2 id="col-title">Colophon.</h2>
+                <p class="statement">
+                    The Atomic Corporation is an early-stage software and service delivery company.
+                    It builds tools for computation, communication, and record-keeping &mdash;
+                    <span class="quiet">and then it runs them, which is the part that counts.</span>
+                </p>
+                <p class="prose" style="margin-top:24px">
+                    Work is done in-house: specification, implementation, deployment, and the
+                    unglamorous maintenance that follows. If you have a problem that fits the
+                    shape of the six systems above, write.
+                </p>
+            </div>
+            <div>
+                <p class="micro" style="border-top:1px solid var(--ink);padding-top:9px;margin-bottom:10px">Contact</p>
+                <div class="contact-list">
+                    <a href="mailto:tjenkins@atomiccorp.org"><span class="k">Email</span><span class="v">tjenkins@atomiccorp.org</span></a>
+                    <a href="https://github.com/Jenkinxs/"><span class="k">GitHub</span><span class="v">github.com/Jenkinxs</span></a>
+                    <a href="https://www.linkedin.com/in/tjenkins1/"><span class="k">LinkedIn</span><span class="v">in/tjenkins1</span></a>
+                    <a href="https://pricey-fish95.bandcamp.com/"><span class="k">Bandcamp</span><span class="v">pricey-fish95</span></a>
+                    <a href="cloud/"><span class="k">Cloud</span><span class="v">cloud.atomiccorp.org</span></a>
+                </div>
+                <p class="micro" style="margin-top:18px;line-height:1.7">
+                    Set in Departure Mono, SIL Open Font License 1.1.<br>
+                    Plates, rules, and marks drawn in CSS and canvas.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="foot">
+    <span>The Atomic Corporation &middot; atomiccorp.org</span>
+    <div class="set">
+        <a href="#main">Back to top</a>
+        <a href="contact/">Contact</a>
+        <span>&copy; 2026</span>
+    </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-(function () {
-  const canvas = document.getElementById('globe-canvas');
-  const wrapper = canvas.parentElement;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  // Raised Y for a slight top-down tilt, pulled closer for bigger appearance
-  camera.position.set(0, 1.1, 2);
-  camera.lookAt(0, 0, 0);
-
-  // ── Single group so globe + landmasses rotate together ──
-  const globeGroup = new THREE.Group();
-  scene.add(globeGroup);
-
-  // Lat/lon wireframe grid
-  const sphereGeo = new THREE.SphereGeometry(1, 36, 24);
-  const wireGeo = new THREE.WireframeGeometry(sphereGeo);
-  const wireMat = new THREE.LineBasicMaterial({
-    color: 0xe8d8a8,
-    transparent: true,
-    opacity: 0.1,
-  });
-  globeGroup.add(new THREE.LineSegments(wireGeo, wireMat));
-
-  // ── GeoJSON landmass outlines ──
-  const RADIUS = 1.008; // slightly proud of sphere to avoid z-fighting
-  const landMat = new THREE.LineBasicMaterial({
-    color: 0xe8d8a8,
-    transparent: true,
-    opacity: 0.6,
-  });
-
-  function latLonToVec3(lat, lon, r) {
-    const phi   = (90 - lat)  * Math.PI / 180;
-    const theta = (lon + 180) * Math.PI / 180;
-    return new THREE.Vector3(
-      -r * Math.sin(phi) * Math.cos(theta),
-       r * Math.cos(phi),
-       r * Math.sin(phi) * Math.sin(theta)
-    );
-  }
-
-  function addContour(coords) {
-    const pts = coords.map(([lon, lat]) => latLonToVec3(lat, lon, RADIUS));
-    if (pts.length < 2) return;
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    globeGroup.add(new THREE.Line(geo, landMat));
-  }
-
-  function processGeoJSON(data) {
-    data.features.forEach(feature => {
-      const g = feature.geometry;
-      if (!g) return;
-      if (g.type === 'Polygon') {
-        g.coordinates.forEach(addContour);
-      } else if (g.type === 'MultiPolygon') {
-        g.coordinates.forEach(poly => poly.forEach(addContour));
-      }
-    });
-  }
-
-  // Load TopoJSON client, then world-atlas countries
-  fetch('https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js')
-    .then(r => r.text())
-    .then(js => { eval(js); })
-    .then(() => fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'))
-    .then(r => r.json())
-    .then(topo => {
-      const geojson = topojson.feature(topo, topo.objects.countries);
-      processGeoJSON(geojson);
-    })
-    .catch(err => console.warn('Globe landmass load failed:', err));
-
-  // ── Resize ──
-  function resize() {
-    const w = wrapper.offsetWidth;
-    const h = wrapper.offsetHeight;
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // ── Animate ──
-  function animate() {
-    requestAnimationFrame(animate);
-    globeGroup.rotation.y += 0.0002;
-    renderer.render(scene, camera);
-  }
-  animate();
-})();
-
-// ── NAV SCRAMBLE ──
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=*+-><';
-function scramble(el, target, ms) {
-  const frames = Math.floor(ms / 35);
-  let f = 0;
-  const iv = setInterval(() => {
-    f++;
-    const prog = f / frames;
-    el.textContent = target.split('').map((ch, i) => {
-      if (ch === ' ') return ' ';
-      if (i < Math.floor(prog * target.length)) return ch;
-      return CHARS[Math.floor(Math.random() * CHARS.length)];
-    }).join('');
-    if (f >= frames) { clearInterval(iv); el.textContent = target; }
-  }, 35);
-  return iv;
-}
-
-document.querySelectorAll('.nav-cell:not(.nav-logo-cell):not(.nav-theme-cell)').forEach(cell => {
-  const el = cell.querySelector('.nav-link-text');
-  if (!el) return;
-  const orig = el.dataset.orig || el.textContent.trim();
-  let iv = null;
-  cell.addEventListener('mouseenter', () => { if (iv) clearInterval(iv); iv = scramble(el, orig, 420); });
-  cell.addEventListener('mouseleave', () => { if (iv) clearInterval(iv); el.textContent = orig; });
-});
-
-
-// ── FEATURE CARDS CLICK HANDLERS ──
-const cardLinks = {
-  'AtomicTelephone': './atomictelephone/',
-  'AM': 'https://github.com/Jenkinxs/AM',
-  'Mimeograph': 'https://github.com/Jenkinxs/Mimeograph',
-  'AtomicNWS': 'https://github.com/Jenkinxs/AtomicNWS',
-  'SENTINEL': 'https://github.com/Jenkinxs',
-  'Athena': 'https://github.com/Jenkinxs'
-};
-
-document.querySelectorAll('.feature-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const title = card.querySelector('h3').textContent.trim();
-    const link = cardLinks[title];
-    if (link) window.location.href = link;
-  });
-});
-
-// ── HAMBURGER MENU TOGGLE ──
-const hamburgerBtn = document.getElementById('hamburger-menu');
-const mobileMenu = document.getElementById('mobile-menu');
-
-hamburgerBtn.addEventListener('click', () => {
-  hamburgerBtn.classList.toggle('active');
-  mobileMenu.classList.toggle('active');
-});
-
-// Close menu when a link is clicked
-mobileMenu.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburgerBtn.classList.remove('active');
-    mobileMenu.classList.remove('active');
-  });
-});
-
-// Close menu when clicking outside
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#nav-wrapper')) {
-    hamburgerBtn.classList.remove('active');
-    mobileMenu.classList.remove('active');
-  }
-});
-
-/* ============================================================
-   PARTICLE NETWORK BACKGROUND — particle-network.js
-   Self-contained. No dependencies.
-   ============================================================
-
-   CONFIG — all tunable values live here.
-   ============================================================ */
-const PN_CONFIG = {
-  particleCount:    200,      // number of floating nodes
-  speed:            0.025,    // base drift speed (px/frame)
-  connectRadius:    400,     // max distance to draw a line (px)
-  dotRadius:        0.5,     // particle draw radius (px)
-  mouseRadius:      220,     // mouse repulsion / attraction zone (px)
-  mouseForce:       0.012,   // how strongly mouse repels particles
-  pulseSpeed:       0.018,   // opacity pulse frequency
-  fadeEdge:         0.08,    // fraction of canvas where particles fade out
-};
-
-/* ============================================================
-   INTERNALS — no need to touch below this line
-   ============================================================ */
-(function () {
-  const canvas = document.getElementById('particle-network');
-  if (!canvas) return;
-
-  const ctx = canvas.getContext('2d');
-  const cfg = PN_CONFIG;
-
-  // Pull CSS token values at runtime so changing the CSS var
-  // automatically updates the canvas colours.
-  function cssVar(name) {
-    return getComputedStyle(document.documentElement)
-      .getPropertyValue(name).trim();
-  }
-
-  let W, H, particles = [];
-  let mouse = { x: -9999, y: -9999 };
-  let raf;
-
-  /* ---- Particle class ---- */
-  class Particle {
-    constructor() { this.reset(true); }
-
-    reset(randomY = false) {
-      this.x  = Math.random() * W;
-      this.y  = randomY ? Math.random() * H : (Math.random() < 0.5 ? -10 : H + 10);
-      this.vx = (Math.random() - 0.5) * cfg.speed * 2;
-      this.vy = (Math.random() - 0.5) * cfg.speed * 2;
-      // give very slow particles a nudge so nothing stalls
-      if (Math.abs(this.vx) < 0.05) this.vx += 0.05 * Math.sign(this.vx || 1);
-      if (Math.abs(this.vy) < 0.05) this.vy += 0.05 * Math.sign(this.vy || 1);
-      this.baseAlpha = 0.4 + Math.random() * 0.6;
-      this.phase     = Math.random() * Math.PI * 2;
-      this.r         = cfg.dotRadius * (0.6 + Math.random() * 0.8);
-    }
-
-    update(t) {
-      // mouse repulsion
-      const dx = this.x - mouse.x;
-      const dy = this.y - mouse.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < cfg.mouseRadius && dist > 0) {
-        const force = (1 - dist / cfg.mouseRadius) * cfg.mouseForce;
-        this.vx += (dx / dist) * force * 60;
-        this.vy += (dy / dist) * force * 60;
-      }
-
-      // soft velocity cap
-      const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-      const maxSpeed = cfg.speed * 4;
-      if (speed > maxSpeed) {
-        this.vx = (this.vx / speed) * maxSpeed;
-        this.vy = (this.vy / speed) * maxSpeed;
-      }
-
-      // very gentle drift back to base speed to avoid total stall
-      this.vx *= 0.999;
-      this.vy *= 0.999;
-
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // wrap with a small margin
-      const pad = 20;
-      if (this.x < -pad)  this.x = W + pad;
-      if (this.x > W + pad) this.x = -pad;
-      if (this.y < -pad)  this.y = H + pad;
-      if (this.y > H + pad) this.y = -pad;
-
-      // edge fade
-      const ex = Math.min(this.x / (W * cfg.fadeEdge), (W - this.x) / (W * cfg.fadeEdge), 1);
-      const ey = Math.min(this.y / (H * cfg.fadeEdge), (H - this.y) / (H * cfg.fadeEdge), 1);
-      this.alpha = this.baseAlpha * Math.min(ex, ey) *
-        (0.7 + 0.3 * Math.sin(t * cfg.pulseSpeed + this.phase));
-    }
-
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fillStyle = cssVar('--pn-dot').replace(')', `, ${this.alpha})`).replace('rgb', 'rgba');
-      // if token is already rgba, parse and replace alpha channel
-      ctx.fillStyle = applyAlpha(cssVar('--pn-dot'), this.alpha);
-      ctx.fill();
-    }
-  }
-
-  /* ---- Helpers ---- */
-  function applyAlpha(colorStr, alpha) {
-  const stripped = colorStr.replace(/rgba?\(/, '').replace(')', '');
-  const parts = stripped.split(',').map(Number);
-  // parts[3] is the alpha from your CSS var (defaults to 1 if rgb not rgba)
-  const baseAlpha = parts[3] !== undefined ? parts[3] : 1.0;
-  return `rgba(${parts[0]},${parts[1]},${parts[2]},${(alpha * baseAlpha).toFixed(3)})`;
-}
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-
-  function init() {
-    resize();
-    particles = Array.from({ length: cfg.particleCount }, () => new Particle());
-  }
-
-  /* ---- Draw connections ---- */
-  function drawEdges() {
-    const near   = cssVar('--pn-line-near');
-    const far    = cssVar('--pn-line');
-    const r2     = cfg.connectRadius * cfg.connectRadius;
-
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 > r2) continue;
-
-        const t   = 1 - Math.sqrt(d2) / cfg.connectRadius;
-        const alp = t * Math.min(a.alpha, b.alpha);
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = applyAlpha(t > 0.55 ? near : far, alp * (t > 0.55 ? 1 : 0.7));
-        ctx.lineWidth   = t * 0.9;
-        ctx.stroke();
-      }
-    }
-  }
-
-  /* ---- Radial ambient glow ---- */
-  function drawGlow() {
-    const glow = ctx.createRadialGradient(W * 0.5, H * 0.55, 0, W * 0.5, H * 0.55, W * 0.55);
-    glow.addColorStop(0,   cssVar('--pn-glow'));
-    glow.addColorStop(1,   'transparent');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, W, H);
-  }
-
-  /* ---- Main loop ---- */
-  let t = 0;
-  function loop() {
-    t++;
-    ctx.clearRect(0, 0, W, H);
-    drawGlow();
-    drawEdges();
-    particles.forEach(p => { p.update(t); p.draw(); });
-    raf = requestAnimationFrame(loop);
-  }
-
-  /* ---- Events ---- */
-  window.addEventListener('resize', () => {
-    resize();
-    // Rescatter all particles proportionally to new dimensions
-    // so they don't bunch at the center line after a narrow→wide resize
-    particles.forEach(p => { p.reset(true); });
-  });
-
-  window.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-
-  window.addEventListener('mouseleave', () => {
-    mouse.x = -9999;
-    mouse.y = -9999;
-  });
-
-  // touch support
-  window.addEventListener('touchmove', e => {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-  }, { passive: true });
-
-  window.addEventListener('touchend', () => {
-    mouse.x = -9999;
-    mouse.y = -9999;
-  });
-
-  /* ---- Kick off ---- */
-  init();
-  loop();
-})();
-
-
-</script>
-<script src="particle-network.js"></script>
+<script src="assets/site.js"></script>
 </body>
 </html>
