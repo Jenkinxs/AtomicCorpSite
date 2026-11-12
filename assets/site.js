@@ -44,8 +44,8 @@
         windStart: 0.05,
         scrollWind: 9,
         scrollDamp: 0.92,
-        streak: 4,
-        stretch: 1.1
+        streak: 0,
+        stretch: 0
     };
 
     var forcedProgress = null;
