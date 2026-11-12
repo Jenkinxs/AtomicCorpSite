@@ -106,3 +106,29 @@ language, licence, first commit, public/private state, all pulled from the repos
 - No gradient text or glass. The glitch fringe is a 2px RGB offset at low opacity, not a fill.
 - No invented metrics or claims.
 - No contact form that cannot send.
+
+## Tuning the glyph storm
+
+All of it is one object at the top of `assets/site.js`: `GLYPH_CONFIG`.
+
+| Key | Default | Effect |
+|---|---|---|
+| `count` | `220` | Upper cap on symbols. Actual count also scales with viewport area and is clamped to 30 minimum. |
+| `speed` | `1` | Drift multiplier. `0` freezes them, `2` doubles it. |
+| `sizeMin` / `sizeMax` | `11` / `26` | Font size range in px. |
+| `alphaMin` / `alphaMax` | `0.16` / `0.66` | Opacity range; raised by the flicker pulse. |
+| `colors` | acid, orange, blue, paper, amber, moss | Any subset of the palette keys. |
+| `glyphs` | brackets, math, block-drawing | The character set drawn from. |
+| `glow` | `false` | Soft halo behind each symbol. |
+| `density` | `11000` | Page-wide field. Lower = denser. |
+| `heroDensity` | `5200` | Hero field. |
+| `heroScale` | `1.25` | Size multiplier for the hero field. |
+
+Edit and reload. To tweak a live page, open the console:
+
+```js
+ATX.glyphs({ count: 400, speed: 2, colors: ["orange"], glow: true })
+```
+
+It mutates the config in place and rebuilds both canvases immediately, so you can dial it in
+by eye and then copy the winning values back into `GLYPH_CONFIG`.

@@ -12,6 +12,35 @@
         moss: "#6b8f3a"
     };
 
+    /* ════════════════════════════════════════════════════════════
+       GLYPH STORM — tune the flying symbols here.
+
+       count      maximum symbols on the page (scales with viewport)
+       speed      drift multiplier. 0 = static, 1 = default, 2 = brisk
+       sizeMin    smallest font size in px
+       sizeMax    largest font size in px
+       alphaMin   faintest symbol opacity (0-1)
+       alphaMax   boldest symbol opacity (0-1)
+       colors     any of: acid, orange, blue, paper, amber, moss
+       glyphs     the character set symbols are drawn from
+       glow       soft halo behind each symbol
+       ════════════════════════════════════════════════════════════ */
+
+    var GLYPH_CONFIG = {
+        count: 220,
+        speed: 1,
+        sizeMin: 11,
+        sizeMax: 26,
+        alphaMin: 0.16,
+        alphaMax: 0.66,
+        colors: ["acid", "orange", "blue", "paper", "amber", "moss"],
+        glyphs: "01<>[]{}/\\|=+*#%$@&?!~^\u00b7\u2591\u2592\u2593\u2500\u2502\u250c\u2510\u2514\u2518",
+        glow: false,
+        density: 11000,
+        heroDensity: 5200,
+        heroScale: 1.25
+    };
+
     var MASK_B64 =
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/B/8AAAAAAAAAAAAAAAAAAH/////wB+B4AA8AAAAA" +
         "AAAA//////+AD+AAAAfgAAAAAAAD//+f//+ABoAD8D/8A/gAAAAD///Af/+AAAAPHv//8dAAgf4P///4f/8AAPgPP/////8J" +
@@ -204,8 +233,9 @@
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         var W = 0, H = 0;
         var items = [];
-        var glyphs = "01<>[]{}/\\|=+*#%$@&?!~^\u00b7\u2591\u2592\u2593\u2500\u2502\u250c\u2510\u2514\u2518";
-        var colors = [C.acid, C.orange, C.blue, C.paper, C.amber, C.moss];
+        var cfg = GLYPH_CONFIG;
+        var glyphs = cfg.glyphs;
+        var colors = cfg.colors.map(function (k) { return C[k] || k; });
 
         function size() {
             W = canvas.clientWidth || window.innerWidth;
@@ -219,17 +249,17 @@
         function build() {
             items = [];
             var n = Math.round((W * H) / density);
-            n = Math.max(50, Math.min(260, n));
+            n = Math.max(30, Math.min(cfg.count, n));
             for (var i = 0; i < n; i++) {
                 items.push({
                     x: Math.random() * W,
                     y: Math.random() * H,
-                    vx: (Math.random() - 0.5) * 0.55,
-                    vy: (Math.random() - 0.5) * 0.35,
-                    sz: (11 + Math.random() * 15) * scale,
+                    vx: (Math.random() - 0.5) * 0.55 * cfg.speed,
+                    vy: (Math.random() - 0.5) * 0.35 * cfg.speed,
+                    sz: (cfg.sizeMin + Math.random() * (cfg.sizeMax - cfg.sizeMin)) * scale,
                     g: glyphs[(Math.random() * glyphs.length) | 0],
                     c: colors[(Math.random() * colors.length) | 0],
-                    a: 0.16 + Math.random() * 0.5,
+                    a: cfg.alphaMin + Math.random() * (cfg.alphaMax - cfg.alphaMin),
                     ph: Math.random() * Math.PI * 2
                 });
             }
@@ -242,7 +272,12 @@
             ctx.font = p.sz + 'px "Departure Mono", monospace';
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
+            if (cfg.glow) {
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = p.c;
+            }
             ctx.fillText(p.g, p.x, p.y);
+            ctx.shadowBlur = 0;
         }
 
         var last = performance.now();
@@ -266,6 +301,7 @@
 
         size();
         window.addEventListener("resize", size);
+        canvas.addEventListener("glyphrefit", size);
 
         if (reduce) {
             ctx.clearRect(0, 0, W, H);
@@ -348,8 +384,19 @@
 
     initEntrance();
     initGlobe();
-    initGlyphs("glyphs", 11000, 1);
-    initGlyphs("heroGlyphs", 5200, 1.25);
+    initGlyphs("glyphs", GLYPH_CONFIG.density, 1);
+    initGlyphs("heroGlyphs", GLYPH_CONFIG.heroDensity, GLYPH_CONFIG.heroScale);
+
+    // live tweaking from the console:
+    //   ATX.glyphs({ count: 400, speed: 2, colors: ["orange"] })
+    window.ATX = window.ATX || {};
+    window.ATX.glyphs = function (patch) {
+        Object.keys(patch).forEach(function (k) { GLYPH_CONFIG[k] = patch[k]; });
+        document.querySelectorAll("#glyphs, #heroGlyphs").forEach(function (c) {
+            c.dispatchEvent(new Event("glyphrefit"));
+        });
+        return GLYPH_CONFIG;
+    };
     initScramble();
     initClock();
     initMenu();
