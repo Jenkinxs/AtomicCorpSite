@@ -1,97 +1,108 @@
 # Design system — atomiccorp.org
 
-Bold textmode futurism. Print-poster colour, four type voices, live generated graphics,
-and almost no prose. The site says what the company does and stops.
+Dark cyberpunk textmode. Near-black green ground, phosphor chrome, one hot orange accent,
+cream kept for type. Four type voices, two live canvases, and pixel hardware.
 
 ## Palette
 
-Sampled from the r/textmodefuturism reference corpus, then pushed louder.
+The ground moved from cream to a green-black; cream survives as the type and as highlight
+fills. That is the "less beige, still around" balance.
 
 | Token | Value | Use |
 |---|---|---|
-| `--paper` | `#F2E6C9` | Ground. |
-| `--paper-3` | `#F8F0DC` | Text on dark fills. |
-| `--ink` | `#0C0C08` | Display type, rules, dark bands. |
-| `--ink-2` | `#3B382C` | Body. 9.47:1 on paper. |
-| `--ink-3` | `#5C5745` | Secondary labels. 5.83:1. |
-| `--vermilion` | `#E8401A` | Brand accent: headline word, rules, index numbers. |
-| `--vermilion-fill` | `#C73512` | Any fill that carries text. 4.68:1 with paper-3. |
-| `--amber` | `#F0A018` | Land on the globe, script accents, hover numerals. |
-| `--azure` | `#1F6FEB` | System 02 hover fill. |
-| `--azure-fill` | `#1550C4` | Azure when it carries text. 6.21:1. |
-| `--olive` | `#4A4A24` | System 03 hover fill. |
-| `--teal` | `#23302E` | Globe plate, contact band, flow band. |
-| `--sea` | `#6E7B7B` | Muted marks. |
+| `--void` | `#060A07` | Ground. |
+| `--void-2` | `#0B120D` | Bands, contact section. |
+| `--void-3` | `#111B14` | Row hover. |
+| `--green-2` | `#2F4429` | Hairline dividers. |
+| `--moss` | `#6B8F3A` | Globe interior, secondary labels. |
+| `--acid` | `#A8E05F` | Phosphor chrome, globe limb, active marks. |
+| `--olive` | `#4A5A22` | Floppy body. |
+| `--paper` | `#E8DFC4` | Primary type. |
+| `--paper-2` | `#D6CAA9` | Body copy. |
+| `--paper-3` | `#F4EDD8` | Display headings. |
+| `--orange` | `#FF5510` | The one accent: headline word, numbers, fills. |
+| `--blue` | `#1F6FFF` | Glitch fringe only. |
+| `--amber` | `#F0A018` | Row accent. |
 
-Rule: a fill may only carry text if it is a `-fill` token. Vivid `--vermilion` is for
-large display and non-text marks.
+Everything on the dark ground is cream or acid. Orange is reserved for emphasis so it never
+has to compete with itself.
 
 ## Type
-
-Four faces, four jobs, no overlap.
 
 | Role | Face | Where |
 |---|---|---|
 | Display | **Anton** | Wordmark, section heads, system names, page titles. |
-| Script | **Pinyon Script** | One flourish per page: "for everything you do", "systems", "to us". |
-| Serif | **Bodoni Moda** | The deck line. Roman, never italic — that voice belongs to the script. |
-| Mono | **Departure Mono** | Nav, labels, data, tags, body of documents. |
+| Script | **Pinyon Script** | One flourish per page. |
+| Serif | **Bodoni Moda** | The deck line. Roman. |
+| Mono | **Departure Mono** | Nav, labels, data, document body. |
 
-All self-hosted woff2, all SIL OFL 1.1. No hosted font stylesheet.
-
-The pairing is the point: condensed grotesque shouted against a delicate script, with
-mono as the machine layer underneath.
+All self-hosted woff2, SIL OFL 1.1. See `assets/fonts/FONTS.md`.
 
 ## Generated graphics
 
-Nothing here is a stock image. Both visuals are drawn at runtime.
+**The globe** is the hero background, not an ornament. A 144×72 land mask, rasterised from
+Natural Earth `land-110m` TopoJSON with longitudes unwrapped across the antimeridian, is
+embedded as 1,728 bytes of base64 and projected orthographically with a 20° axial tilt. The
+radius is `max(W,H) × 0.74` so the sphere bleeds past every edge of the hero. Land is amber-
+green block characters at the limb and mid-tone shade inside; ocean is a sparse dot lattice,
+so the entire disc is made of characters. The graticule is stroked lines, the equator is
+orange.
 
-**The globe** (`#globe`) is a textmode Earth. A 144×72 land mask, decoded from a 1,728-byte
-base64 string embedded in `site.js`, is sampled per character cell and projected
-orthographically with a 20° axial tilt. Land is `█` on the limb and `▒` inside, in amber,
-with alpha scaled by depth. The graticule is drawn as real strokes — parallels and
-meridians every 30°, a vermilion equator, a rim — so the "WIRE MESH" caption is true.
-It rotates continuously; under reduced motion it holds one frame.
+**The glyph storm** runs in two places. A fixed full-viewport canvas behind the content
+carries a medium-density field; a second canvas inside the hero runs at roughly double
+density and 1.25× scale so the symbols are unmistakable there. Both drift, flicker, and wrap.
 
-The mask was rasterised from Natural Earth `land-110m` TopoJSON with longitudes unwrapped
-across the antimeridian, which is what removes the horizontal streak artefact.
+**The floppies** are 48×48 SVG drawn with `shape-rendering: crispEdges`, so scaling to
+~150px gives hard pixel edges with no interpolation.
 
-**The flow band** (`#flow`) is a character field: ~42% of cells seeded with glyphs, drifting
-right at per-particle speeds, displaced vertically by a sine wave, coloured from the
-palette. It is the "materials moving through the factory" idea as texture.
+**Horizontal lines** come from `.bands` (drifting sweep lines under the content), the CRT
+`.scanlines` overlay at `z-index: 60`, and the hairline row dividers.
 
-**The marquee** is duplicated text translated −50% on a 26s loop, with edge fades in the
-band colour so the seam never reads as a cut.
+## Layer order
+
+```
+#glyphs        fixed, z 1   page-wide character field
+main           z 2          content; sections are semi-transparent so glyphs ghost through
+  .hero
+    .hero-art  z 0         7Plague.jpg, green-shifted, 0.32 opacity
+    #globe     z 1         textmode Earth
+    #heroGlyphs z 2        dense character field
+    .bands     z 1
+    .floppy    z 2
+    .shell     z 2         type, with a radial scrim so it always wins
+.vignette      fixed, z 55
+.scanlines     fixed, z 60
+```
+
+The hero scrim is deliberately asymmetric — strong behind the text column, clear on the
+right — so the globe reads at full strength where there is no type.
 
 ## Motion
 
-One entrance: hero elements rise 14px and fade once on load, staggered 60–270ms, from an
-already-visible default. Gated behind a `.js` class added in `<head>` so a JS failure
-never leaves the page blank.
+The globe rotates continuously with a slow radial breath. The glyph fields drift and flicker.
+The headline jitters every few seconds via a stepped transform. Nav and system rows scramble
+their text on hover using the character-cycling effect from the original site. Bands sweep.
 
-System rows fill with colour on hover via a `translateY(101%)` pseudo-element on a
-0.42s ease. The name grows an arrow. The tag border brightens.
+One entrance: hero elements rise and fade once, staggered, gated behind a `.js` class set in
+`<head>` so a script failure never leaves the page blank.
 
-Everything collapses under `prefers-reduced-motion: reduce`; the canvases draw one static
-frame instead of looping.
+All of it collapses under `prefers-reduced-motion: reduce`; canvases draw a single frame.
 
-## Browser surfaces
+## Navbar
 
-Selection is vermilion on paper-3. Focus is a 3px azure ring at 3px offset. Scrollbars are
-vermilion on paper. Numerals are `tabular-nums`.
+Two tiers. The upper bar carries the mark, bracketed nav tokens `[ SYSTEMS ] [ LOG ] [ NET ]
+[ MAIL ]`, a live clock with a blinking block cursor, and the scramble hover. The lower strip
+carries system telemetry — node, link state, revision. It is meant to read as a console, not
+a menu.
 
 ## Content
 
-Short. Each system is a name and one line. No ledes, no margin notes, no excerpts.
-Every fact is real: language, licence, first commit, public/private state, all pulled from
-the actual repositories.
-
-Release vocabulary is one axis: **Public**, **GPL-3.0**, **Source**, **Private**.
+Each system is a name and one line. No ledes, no excerpts, no marquee. Every fact is real:
+language, licence, first commit, public/private state, all pulled from the repositories.
 
 ## What this is not
 
-- No card grid of icon plus heading plus text.
-- No gradient text, glass, or soft shadows. The one shadow is a hard offset block, and the
-  world earned it.
-- No invented metrics, customers, or reviews.
+- No scrolling ticker advertising the products. That was removed on request.
+- No gradient text or glass. The glitch fringe is a 2px RGB offset at low opacity, not a fill.
+- No invented metrics or claims.
 - No contact form that cannot send.

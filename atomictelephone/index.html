@@ -12,18 +12,30 @@
 <script>document.documentElement.className+=" js";</script>
 </head>
 <body>
+<canvas id="glyphs" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="bar">
-    <div class="bar-mark"><span class="sq"></span><span>The Atomic Corporation</span></div>
-    <nav class="bar-nav" aria-label="Primary">
-        <a href="../index.html#systems">Systems</a>
-        <a href="../articles/">Writing</a>
-        <a href="../cloud/">Cloud</a>
-        <a href="../contact/">Contact</a>
-    </nav>
-    <div class="bar-clock"><span data-clock>----</span></div>
-    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="main">Index</button>
+    <div class="bar-main">
+        <div class="bar-mark">
+            <span class="blip"></span>
+            <b data-scramble="THE ATOMIC CORPORATION">THE ATOMIC CORPORATION</b>
+        </div>
+        <nav class="bar-nav" aria-label="Primary">
+            <a href="../index.html#systems"><span class="br">[</span><span data-scramble="SYSTEMS">SYSTEMS</span><span class="br">]</span></a>
+            <a href="../articles/"><span class="br">[</span><span data-scramble="LOG">LOG</span><span class="br">]</span></a>
+            <a href="../cloud/"><span class="br">[</span><span data-scramble="NET">NET</span><span class="br">]</span></a>
+            <a href="../contact/"><span class="br">[</span><span data-scramble="MAIL">MAIL</span><span class="br">]</span></a>
+        </nav>
+        <div class="bar-clock"><span data-clock>----</span><span class="cur">&#9608;</span></div>
+        <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="main">MENU</button>
+    </div>
+    <div class="bar-sub" aria-hidden="true">
+        <span>NODE 06 &middot; ATXCORP</span>
+        <span class="live">&#9679; LINK ACTIVE</span>
+        <span>REV 2026.11</span>
+    </div>
 </header>
 
 <main id="main">
@@ -143,6 +155,7 @@
     </div>
 </footer>
 
+<div class="scanlines" aria-hidden="true"></div>
 <script src="../assets/site.js"></script>
 </body>
 </html>
