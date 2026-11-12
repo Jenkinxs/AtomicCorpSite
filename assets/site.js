@@ -38,8 +38,21 @@
         glow: false,
         density: 1,
         heroDensity: 5200,
-        heroScale: 1.25
+        heroScale: 1.25,
+
+        /* scroll-driven directional storm */
+        windStart: 0.05,
+        scrollWind: 9,
+        scrollDamp: 0.92,
+        streak: 4,
+        stretch: 1.1
     };
+
+    var forcedProgress = null;
+    var redraws = [];
+    var lastWind = -1;
+    var lastGhosts = -1;
+    var lastStretch = 1;
 
     var MASK_B64 =
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/B/8AAAAAAAAAAAAAAAAAAH/////wB+B4AA8AAAAA" +
@@ -233,6 +246,7 @@
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         var W = 0, H = 0;
         var items = [];
+        var stretchNow = 1;
         var cfg = GLYPH_CONFIG;
         var glyphs = cfg.glyphs;
         var colors = cfg.colors.map(function (k) { return C[k] || k; });
@@ -265,9 +279,9 @@
             }
         }
 
-        function paint(p, now) {
+        function paint(p, now, dx, aMul) {
             var flick = now === undefined ? 0.7 : 0.55 + 0.45 * Math.sin(now * 0.0011 + p.ph);
-            ctx.globalAlpha = p.a * flick;
+            ctx.globalAlpha = p.a * flick * (aMul === undefined ? 1 : aMul);
             ctx.fillStyle = p.c;
             ctx.font = p.sz + 'px "Departure Mono", monospace';
             ctx.textAlign = "center";
@@ -276,28 +290,72 @@
                 ctx.shadowBlur = 12;
                 ctx.shadowColor = p.c;
             }
-            ctx.fillText(p.g, p.x, p.y);
+            if (aMul !== undefined && aMul < 0.999) {
+                ctx.fillText(p.g, p.x + (dx || 0), p.y);
+            } else if (stretchNow > 1.06) {
+                var k = Math.min(1, (stretchNow - 1) / 1.0);
+                var tail = k * p.sz * 5.5;
+                ctx.globalAlpha = p.a * flick * (0.10 + 0.30 * k);
+                ctx.fillStyle = p.c;
+                ctx.fillRect(p.x - tail, p.y - p.sz * 0.14, tail, p.sz * 0.28);
+                ctx.globalAlpha = p.a * flick;
+                ctx.fillText(p.g, p.x, p.y);
+            } else {
+                ctx.fillText(p.g, p.x, p.y);
+            }
             ctx.shadowBlur = 0;
         }
 
         var last = performance.now();
-        function frame(now) {
-            var dt = Math.min(48, now - last) / 16.67;
+        var maxScroll = 1;
+        function measureScroll() {
+            maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        }
+        measureScroll();
+        window.addEventListener("resize", measureScroll);
+        window.addEventListener("scroll", measureScroll, { passive: true });
+
+        function step(now, advance) {
+            var dt = advance ? Math.min(48, now - last) / 16.67 : 0;
             last = now;
+
+            var t = forcedProgress !== null
+                ? forcedProgress
+                : Math.min(1, Math.max(0, window.scrollY / maxScroll));
+            var span = Math.max(0.001, 1 - cfg.windStart);
+            var w = Math.min(1, Math.max(0, (t - cfg.windStart) / span));
+            var wind = w * cfg.scrollWind;
+            var damp = 1 - w * cfg.scrollDamp;
+            var ghosts = w > 0.1 ? Math.round(w * cfg.streak) : 0;
+            stretchNow = 1 + w * cfg.stretch;
+            lastWind = wind; lastGhosts = ghosts; lastStretch = stretchNow;
+
             ctx.clearRect(0, 0, W, H);
+
             for (var i = 0; i < items.length; i++) {
                 var p = items[i];
-                p.x += p.vx * dt;
-                p.y += p.vy * dt;
-                if (p.x < -30) p.x = W + 30;
-                if (p.x > W + 30) p.x = -30;
+                p.x += (p.vx * damp + wind) * dt;
+                p.y += (p.vy * damp) * dt;
+
+                if (p.x < -40) p.x = W + 40;
+                if (p.x > W + 40) p.x = -40;
                 if (p.y < -30) p.y = H + 30;
                 if (p.y > H + 30) p.y = -30;
+
+                for (var s = ghosts; s >= 1; s--) {
+                    paint(p, now, -s * (7 + wind * 1.5), 0.58 / s);
+                }
                 paint(p, now);
             }
             ctx.globalAlpha = 1;
+        }
+
+        function frame(now) {
+            step(now, true);
             requestAnimationFrame(frame);
         }
+
+        redraws.push(function () { step(performance.now(), false); });
 
         size();
         window.addEventListener("resize", size);
@@ -391,11 +449,18 @@
     //   ATX.glyphs({ count: 400, speed: 2, colors: ["orange"] })
     window.ATX = window.ATX || {};
     window.ATX.glyphs = function (patch) {
-        Object.keys(patch).forEach(function (k) { GLYPH_CONFIG[k] = patch[k]; });
+        Object.keys(patch).forEach(function (k) {
+            if (k === "progress") { forcedProgress = patch[k]; return; }
+            GLYPH_CONFIG[k] = patch[k];
+        });
         document.querySelectorAll("#glyphs, #heroGlyphs").forEach(function (c) {
             c.dispatchEvent(new Event("glyphrefit"));
         });
+        redraws.forEach(function (fn) { fn(); });
         return GLYPH_CONFIG;
+    };
+    window.ATX.debug = function () {
+        return { progress: forcedProgress, redraws: redraws.length, wind: lastWind, ghosts: lastGhosts, stretch: lastStretch };
     };
     initScramble();
     initClock();

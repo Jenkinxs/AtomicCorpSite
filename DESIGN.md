@@ -124,6 +124,31 @@ All of it is one object at the top of `assets/site.js`: `GLYPH_CONFIG`.
 | `heroDensity` | `5200` | Hero field. |
 | `heroScale` | `1.25` | Size multiplier for the hero field. |
 
+### Scroll-driven wind
+
+The field is calm at the top of the page and turns into a hard left-to-right storm as you
+scroll. Scroll progress `t` (0 at top, 1 at bottom) drives it:
+
+| Key | Default | Effect |
+|---|---|---|
+| `windStart` | `0.05` | Progress at which the wind begins to bite. |
+| `scrollWind` | `9` | Horizontal px per frame at full scroll. |
+| `scrollDamp` | `0.92` | How much the random drift is suppressed at full scroll, so the storm reads as one direction rather than noise. |
+| `streak` | `4` | Trailing ghost copies behind each symbol. |
+| `stretch` | `1.1` | Horizontal speed smear; `0` disables it. |
+
+At full scroll each glyph is drawn with a solid horizontal tail plus four fading echoes, so
+the vertical character lattice blurs into horizontal banding — the "forceful storm" reading.
+
+Inspect a state without scrolling by pinning progress:
+
+```js
+ATX.glyphs({ progress: 0.95 })   // full storm
+ATX.glyphs({ progress: 0 })      // calm
+ATX.glyphs({ progress: null })   // back to real scroll position
+ATX.debug()                      // { progress, redraws, wind, ghosts, stretch }
+```
+
 Edit and reload. To tweak a live page, open the console:
 
 ```js
