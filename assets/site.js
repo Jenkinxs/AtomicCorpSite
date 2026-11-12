@@ -28,7 +28,7 @@
 
     var GLYPH_CONFIG = {
         count: 220,
-        speed: 1,
+        speed: 10,
         sizeMin: 11,
         sizeMax: 26,
         alphaMin: 0.16,
@@ -36,7 +36,7 @@
         colors: ["acid", "orange", "blue", "paper", "amber", "moss"],
         glyphs: "01<>[]{}/\\|=+*#%$@&?!~^\u00b7\u2591\u2592\u2593\u2500\u2502\u250c\u2510\u2514\u2518",
         glow: false,
-        density: 11000,
+        density: 1,
         heroDensity: 5200,
         heroScale: 1.25
     };
