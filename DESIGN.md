@@ -31,7 +31,7 @@ has to compete with itself.
 
 | Role | Face | Where |
 |---|---|---|
-| Display | **Anton** | Wordmark, section heads, system names, page titles. |
+| Display | **Michroma Ultra Alt** | Wordmark, section heads, system names, page titles. |
 | Script | **Pinyon Script** | One flourish per page. |
 | Serif | **Bodoni Moda** | The deck line. Roman. |
 | Mono | **Departure Mono** | Nav, labels, data, document body. |
