@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northwind Fabrication — Incident Response Portal</title>
+<style>
+:root {
+  --bg: #0e1116;
+  --panel: #161b22;
+  --line: #252d38;
+  --text: #dfe6ef;
+  --muted: #8b9bad;
+  --accent: #d8a657;
+  --accent-dim: #7a5c2e;
+  --error: #e06c75;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.frame { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+  margin-bottom: 32px;
+}
+
+.brand { display: flex; gap: 16px; align-items: center; }
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+h1 { font-size: 17px; margin: 0; font-weight: 600; letter-spacing: 0.01em; }
+h2 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
+.sub { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+.badge {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 4px 10px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 24px;
+  margin-bottom: 18px;
+}
+
+.login { max-width: 460px; }
+.muted { color: var(--muted); font-size: 13.5px; }
+.foot { color: var(--muted); font-size: 12px; margin: 18px 0 0; }
+
+label {
+  display: block;
+  margin: 16px 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+input {
+  width: 100%;
+  padding: 11px 12px;
+  background: #0d1117;
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 14px;
+}
+
+input:focus { outline: none; border-color: var(--accent-dim); }
+
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 11px;
+  background: var(--accent);
+  border: 0;
+  color: #14181d;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:disabled { opacity: 0.55; cursor: default; }
+
+.error { color: var(--error); font-size: 13px; margin: 14px 0 0; }
+
+.head { border-left: 2px solid var(--accent); }
+
+dl { margin: 0; }
+dt {
+  color: var(--accent);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 18px;
+}
+dd { margin: 6px 0 0; }
+
+ul { margin: 8px 0 0; padding-left: 18px; }
+li { margin-bottom: 8px; }
+
+.mono {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 13px;
+  background: #0d1117;
+  border: 1px solid var(--line);
+  padding: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 2px 7px;
+  margin-right: 8px;
+}
+
+</style>
+</head>
+<body>
+<div class="frame">
+  <header class="masthead">
+    <div class="brand">
+      <span class="mark">NW</span>
+      <div>
+        <h1>Incident Response Portal</h1>
+        <p class="sub">Northwind Fabrication &middot; Case IR-2026-1114-NW7</p>
+      </div>
+    </div>
+    <span class="badge">Confidential</span>
+  </header>
+
+  <section id="login" class="card login">
+    <h2>Retained counsel access</h2>
+    <p class="muted">Credentials were issued by the service desk and recorded in the case ticket.</p>
+    <form id="login-form" autocomplete="off">
+      <label for="user">Username</label>
+      <input id="user" name="user" type="text" spellcheck="false" placeholder="ir-username">
+      <label for="pass">Password</label>
+      <input id="pass" name="pass" type="password" placeholder="temporary credential">
+      <button type="submit" id="submit">Unlock case file</button>
+      <p id="error" class="error" hidden></p>
+    </form>
+    <p class="foot">Access is logged. Case contents are sealed with a key derived from the issued credential.</p>
+  </section>
+
+  <section id="case" hidden>
+    <div class="card head">
+      <h2 id="case-title"></h2>
+      <p id="case-meta" class="muted"></p>
+      <p id="case-summary"></p>
+    </div>
+    <div id="sections"></div>
+  </section>
+</div>
+<script id="case-bundle" type="application/json">{"v": 1, "kdf": "PBKDF2-SHA256", "iterations": 200000, "cipher": "AES-256-GCM", "salt": "DE8Nd7Of212d9oZUQSHdcg==", "nonce": "m10ai519oPBRc3VO", "ciphertext": "jVjK+IqS0ixF/0X2DFWED++ZaNOcgaug0zFGXD6OTuD2rDqWu0+Bw8bTLoiOOyxvnaUEPrmmMFqAXNk5S4qj+WxxgapXsUhmgpbTdDekTPk/LNLoD3+OhXTiY2xyjiv3vAw88rzDsSgZWwPPwP+wfM/suXx5UDxyNfAdteMJIk08S3PM/SE4GFBGWgBn7/gM9iaVVmH65JQ7Jni3Gq1N+s2WbBY29cNOVaIxKS0E87pUO06ofhwvpRWEUJBsxnY/u2EdIXmHHrlU0xaZgEORmZbZCC7Dk5X7/ieXfM8JPQyM+5vRx5Ah2a/CN/qhQcowCDRB8treFIzvk62W8QvAkL7sKdiJtWj2NfgEkl5oVYga6tznNRL0MksGd8wt0LCzZc+9JlMcT9/swo/Zw7IV9cemnWC0m9Qt6mERsG7FFEsP9OxGjRrt5UVPXOnrshDPBCLUQrD7oaIcei4cO2AXjE1r4pVZMQ/xxpiMi3MzXnpdqKSwV/iOIibRpxmIp9rgg9u97Lwci3lKRLXYFJQRn9zLRxcjyWnHDRSGDERShKfVWirtAUsthjh3VJek1MR2srwsSBaD+EVGcEdxpPUBtN7OX6cB/JXL27NjO3yxicwFXDHCsq0OfsYNlWZScHQ4Dyxp31eGIk8uWRGux8hRSfqc0LC0O0otZ7I4Cfc7aiMOWApSnVUELn5bDjD1CkDdCR01xL0EMihwciGL49ULURbt6c5vQk7HEA6Ah36LpIMWo8R7oDSin13Mbx3GQXQMWUjKdotSQkafvFm/fKIGt458A5O9/87/0VZ3q/FYsLOVcRmsShpm+7TbJlLJ4n3FvIaP8o27xMpQEYZQUNKF2d6JaT8pzzO19okggseZptA1vijr57mCXGXZvoO1SGUIFbVc80vMMDMHevei3gc+cWuBZIR3hxpX9fJEOW/l/Ghw4304xOFaUzvI1uL9Xekmw8YIGJpJWyS09H1a0cPNhFX6JFf14URbi1flDSSSbiYVxiP/7VZjCwVyaVWeSN495ib8sY/gcoVmB+j+xARHBLYYhqUyGvvafP6p+sIvgAR1+bisoHSLxNKfXe7WYOqWI7i/VxrNgTMGx/XyLvsIvBM1rJpXod3L0Xu2MVZMRDrlIu1WfuvdQKw3jok8HxMN1/elWbjxzcbeLhrw4EjXDW2j4EbKuU3yvYQz+x7SXsB9/wJSAwiG6vtA3XEe9XAUJ4y7qp9odpq35ntAFH7H6ijMTrc78wvNVQ054+kYUx57Utz+0G3o98/3Sy9H/1GgOXPsoFnFkN5CCwSJ6lw6zRNdhW54dARzt1Hm4Htj/xS0qIEbcZao6ZDpefq0KsN8zKLJYoif7mA8xHjMnA/DSON8eMLo/bgUTJuDMROhbdnscG6UNSt0SB4c8cEcWsA1VNk9lFZFuQZViiRvbCW2SjxVm8bOdzX0h/D9lhik4G4rIMmAPX2ood/29+AHENP8zoFUKusQkNiga1gSlq4MjOAYC79RiuoqV/G7PRRJfq3EzME0c+scPsE9m/DqYP/kaF9FqX8zIBTEazO5rJ8LkuIrPNZghvkqnj8RyAWGCL06K6MnR+Vcr2qUWEqGZwZrUpKbtpF3SSp5QSgLTowFqLSRAzUmRD2bUgGzFgfc/pmPvBiazddhfDEnu5YVXEah8ixmb9WolH1gCGV3ZqA9nczztBr6JN2TlNHs7hnNIa0iUFHQxOV0g7P+88WJtFiLJyF/bvPXZNh3/rTek+GWUj3ShTVff7gGiPEHViIovMG81dixsXoDN2dor8RHRQiQN/9rPTAL3cAfLOgXdM1h7tVkYjdPibyCIa2tV9h6jT49NX1XkRi+e/plJqMLAG07XE8M/poWSEv6IbaqXhp4tgA6MBVzj8SB1ot13M960P+owvHsooVQ2vUEFed00Ceij5GTI4FwJYezWnDYnchIIdbs9/Vde+c/dhB0/iTWKSO6jlBMBseVnRaTkWZGMIsoqhlEkOXNDTI9yEyOBeCQaCUi6w/jcN4uBquv7XRxCeB6mTWl46T3C5BbSj7+3RZVONN6CCcWh8/WfwB18fVCPfch/PsFxf1pvB6wJ5re9HCN2ZV+YlembXiM5i2bPjvpJKl06yzx+ZfctwXVnYIKS1AUy/Nd0LNDgsrGutKaPVCEN1L6wsQ3F84ucg8xyuOGTlxpuQxxd+iiGCSbTnoClh/bNaMiJIhH78UySrfctarwhUyognp4udkhObmttdmQCziyx6pf8y0+9AJxRjRoC/Ofzuqc/iUX3NVn/EhhchzV9T//iG3WOyTPLqPDz8m8bBIwEPI/nFSjz7So5bp/F961fFI+fs6by2gwpMW3nvxGM7IGdnjtxtVm2WMj6IIxyMlHgLf0AFm+ka7kXsrObsajCUk4blP0j741U9whjaexSY1D29U/x6AmACB5RkAxcCI7LiSIgeyBR61EkMpZtvFc5wtUJ23c+en7Xrki5gUw/sLFWSLJbC+hLj5LQTsXo5JjQwBZSpJsnefgRft11Jjo9BmgVJjNY42oCxaw/5AdyJh/rejKKId1NeW4I4uBYtZfagG+dTbVDcEKKd/JtD3uZ5J8HHuKfVa3+G0T/Pa0oT7mCXMtTF/5lLaknIkpycKsDXlPWtNHuxxzfEFuJKpw2H0nF09vU6bsQclwZlPc86LLW6tygsKqs51yUx43ydzrsrMo9+sSYckvhFpdOJ5UaqKIgW8PI2FqlzfhR0+5cVB/eMpDfiU4oExUjOwHYAZrS3k6n/g85c9HkplsAYRB7wLnXlXo8pVUFyRkf5PLJYayH/VNtkNWs2eRpZU8HdxaAd5cbMSktuim1MZUTvUM0m6VVdSDodWF0SpDvNK8/es1SpOIC63LJbBvXuK6Vain8HAvflrKn+57cdvyAoyXX2K1wO+ReucPUq9jruC8pkhRb9Yhi5t494ehQJ8P9ZiTsRL63dZdXL01MV4ekMZHnC9uZPn8jHi5Tr0B0JLKzRSyywHJbtiDT9CFWhsmLnUv2RnOJv0GRfXm8jNuaWhGFZoJKzNKBCxAuz3JobZW8mNZnx0ToVpgBYokNURy3zoWpTEBz8QCNEVnAtbMUaNZnNCR56Jqj/QpiwNyzVXPyW8iWhcpQbfUHSmWeir8BfQ8vCfrqBFirFqS8pxzmzj3Fv06BMGehQl2seSDWRcBNwzcLsecpi3YMyZk8nq7vrBYIYN9tHwQpV69ciT2r3Zm8CpCX0RL8xBr6k2MZ/YbeayIj+3CZcveCLZjYSqvHEp6wFF7RfYOJ0K4tRaaOPGx9CjjynlPQ2OCf5nXodvSVf2DBhv5YMYcYU8Vi5Ba4MYY57miF7Hck451NIbMkNvtK7g8AdCbalpXII3VuQEDoHGWehn1BT1gXQ8uYJC+xM6BW1UmUYH+6yR73YPkXFzsA0RJu/UpDPo3kFo6Uq4pclugF2Ttsav9/D5WW1A0ePvCr7CwRjLeLKCT6CewBzAZGeXsDogpCqBgHwU2FRXmPHCQEK9DA2WMCPz/yfIboJrc4vqggNCJ031ysFJZVTM1DK2YGMOaPddRryOV5m5FGWnfUbLEVMI0YEbfY17gD8wIupGHQyBrAfxu0zKxF5rUoKFyMfbMuyTcLuzklHX5b90iJq3Tn8SMe1CR97wB6lu8urorj70rHDL6GNTMI9tQ5qPNkqYlk4G4ARhyOzeIjfwVYRt8CGc8A5ctGdmO9w6EgAkFuE1LpNItUy8o/b10fIgJOfeZnXCV1kU2Q4aJ6TivzL5q8VIimSvGyUM4b1yMoBUaVFptC+bVJvgabCi58D3w5DaEGRUghxZdiXJ2IcuCcfoXCecExJlWi4AitcK4uJ6j3H6pTYTPVULse6Q6VLDlJ7B1OyhfmSurM/d1UOPFxtu8Nkpq"}</script>
+<script>
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+function from_b64(value) {
+    const binary = atob(value);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+function read_bundle() {
+    const node = document.getElementById("case-bundle");
+    if (!node) {
+        throw new Error("case archive unavailable");
+    }
+    return JSON.parse(node.textContent);
+}
+
+async function decrypt_bundle(password) {
+    const bundle = read_bundle();
+    const material = await crypto.subtle.importKey(
+        "raw", encoder.encode(password), "PBKDF2", false, ["deriveKey"]
+    );
+    const key = await crypto.subtle.deriveKey(
+        {
+            name: "PBKDF2",
+            salt: from_b64(bundle.salt),
+            iterations: bundle.iterations,
+            hash: "SHA-256",
+        },
+        material,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["decrypt"]
+    );
+    const plaintext = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: from_b64(bundle.nonce) },
+        key,
+        from_b64(bundle.ciphertext)
+    );
+    return JSON.parse(decoder.decode(plaintext));
+}
+
+function card() {
+    const element = document.createElement("div");
+    element.className = "card";
+    return element;
+}
+
+function heading(text) {
+    const element = document.createElement("h2");
+    element.textContent = text;
+    return element;
+}
+
+function list(items) {
+    const element = document.createElement("ul");
+    for (const item of items) {
+        const entry = document.createElement("li");
+        entry.textContent = item;
+        element.appendChild(entry);
+    }
+    return element;
+}
+
+function render(data) {
+    document.getElementById("case-title").textContent = data.customer;
+    document.getElementById("case-meta").textContent =
+        `${data.case_id} · ${data.prepared_by} · ${data.classification}`;
+    document.getElementById("case-summary").textContent = data.summary;
+
+    const container = document.getElementById("sections");
+    container.textContent = "";
+
+    const statement = card();
+    statement.appendChild(heading("Customer statement"));
+    statement.appendChild(list(data.customer_statement));
+    container.appendChild(statement);
+
+    const observations = card();
+    observations.appendChild(heading("Analyst observations"));
+    observations.appendChild(list(data.analyst_observations));
+    container.appendChild(observations);
+
+    const hosts = card();
+    hosts.appendChild(heading("Host notes"));
+    const dl = document.createElement("dl");
+    for (const note of data.host_notes) {
+        const term = document.createElement("dt");
+        term.textContent = note.host;
+        const detail = document.createElement("dd");
+        detail.textContent = note.finding;
+        dl.appendChild(term);
+        dl.appendChild(detail);
+    }
+    hosts.appendChild(dl);
+    container.appendChild(hosts);
+
+    const corrections = card();
+    corrections.appendChild(heading("Sequence corrections"));
+    corrections.appendChild(list(data.sequence_corrections));
+    container.appendChild(corrections);
+
+    const questions = card();
+    questions.appendChild(heading("Open questions"));
+    questions.appendChild(list(data.open_questions));
+    container.appendChild(questions);
+
+    const handling = card();
+    handling.appendChild(heading("Evidence handling"));
+    const policy = document.createElement("p");
+    policy.textContent = data.handling;
+    handling.appendChild(policy);
+    container.appendChild(handling);
+
+    const archive = card();
+    archive.appendChild(heading("Archived evidence"));
+    for (const [alertId, record] of Object.entries(data.archived_evidence)) {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = alertId;
+        archive.appendChild(tag);
+        const title = document.createElement("strong");
+        title.textContent = record.title;
+        archive.appendChild(title);
+        const body = document.createElement("div");
+        body.className = "mono";
+        body.textContent = record.body;
+        archive.appendChild(body);
+        const meta = document.createElement("p");
+        meta.className = "muted";
+        meta.textContent = `Archived ${record.archived_at} by ${record.archived_by} · host ${record.host}`;
+        archive.appendChild(meta);
+    }
+    container.appendChild(archive);
+
+    const next = card();
+    next.appendChild(heading("Next steps"));
+    const nextText = document.createElement("p");
+    nextText.textContent = data.next_steps;
+    next.appendChild(nextText);
+    container.appendChild(next);
+}
+
+document.getElementById("login-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = document.getElementById("submit");
+    const error = document.getElementById("error");
+    const username = document.getElementById("user").value.trim().toLowerCase();
+    const password = document.getElementById("pass").value;
+
+    error.hidden = true;
+    button.disabled = true;
+    button.textContent = "Deriving key…";
+
+    try {
+        const data = await decrypt_bundle(password);
+        if (username !== "ir-northwind") {
+            throw new Error("unknown principal");
+        }
+        render(data);
+        document.getElementById("login").hidden = true;
+        document.getElementById("case").hidden = false;
+    } catch (failure) {
+        error.textContent = "Access denied. Credential rejected or archive unavailable.";
+        error.hidden = false;
+        button.disabled = false;
+        button.textContent = "Unlock case file";
+    }
+});
+
+</script>
+</body>
+</html>
